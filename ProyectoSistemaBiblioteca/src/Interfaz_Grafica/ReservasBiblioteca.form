@@ -160,9 +160,9 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jTextField3" max="32767" attributes="0"/>
                               <Component id="jTextField4" max="32767" attributes="0"/>
-                              <Component id="jTextField5" pref="141" max="32767" attributes="0"/>
-                              <Component id="jTextField6" pref="141" max="32767" attributes="0"/>
+                              <Component id="TextField_UsuarioReserva" pref="141" max="32767" attributes="0"/>
                               <Component id="jComboBox4" pref="141" max="32767" attributes="0"/>
+                              <Component id="jComboBox5" alignment="0" pref="141" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                           <Component id="jScrollPane1" min="-2" pref="474" max="-2" attributes="0"/>
@@ -178,12 +178,12 @@
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="3" attributes="0">
                                       <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jTextField5" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="TextField_UsuarioReserva" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="3" attributes="0">
                                       <Component id="jLabel3" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
-                                      <Component id="jTextField6" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jComboBox5" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="3" attributes="0">
@@ -239,10 +239,11 @@
                     <Component class="javax.swing.JTable" name="jTable1">
                       <Properties>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                          <Table columnCount="5" rowCount="4">
+                          <Table columnCount="6" rowCount="4">
                             <Column editable="true" title="ID" type="java.lang.Object"/>
                             <Column editable="true" title="Usuario" type="java.lang.Object"/>
                             <Column editable="true" title="Libro" type="java.lang.Object"/>
+                            <Column editable="true" title="Estado del Pr&#xe9;stamo" type="java.lang.Object"/>
                             <Column editable="true" title="Fecha del Prestamo" type="java.lang.Object"/>
                             <Column editable="true" title="Fecha Devolucion" type="java.lang.Object"/>
                           </Table>
@@ -261,14 +262,9 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField4ActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JTextField" name="jTextField5">
+                <Component class="javax.swing.JTextField" name="TextField_UsuarioReserva">
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField5ActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JTextField" name="jTextField6">
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField6ActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TextField_UsuarioReservaActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel6">
@@ -284,6 +280,16 @@
                         <StringItem index="1" value="Retiro Pendiente"/>
                         <StringItem index="2" value="Entrega Pendiente"/>
                         <StringItem index="3" value="Rentado"/>
+                      </StringArray>
+                    </Property>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JComboBox" name="jComboBox5">
+                  <Properties>
+                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                      <StringArray count="2">
+                        <StringItem index="0" value="Seleccione"/>
+                        <StringItem index="1" value=" "/>
                       </StringArray>
                     </Property>
                   </Properties>
