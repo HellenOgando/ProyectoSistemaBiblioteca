@@ -9,12 +9,12 @@ package Interfaz_Grafica;
  *
  * @author albe211
  */
-public class ReservasBiblioDemo extends javax.swing.JFrame {
+public class ReservasEstudiantes extends javax.swing.JFrame {
 
     /**
      * Creates new form ReservasBiblioDemo
      */
-    public ReservasBiblioDemo() {
+    public ReservasEstudiantes() {
         initComponents();
     }
 
@@ -290,20 +290,23 @@ public class ReservasBiblioDemo extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ReservasBiblioDemo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ReservasEstudiantes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ReservasBiblioDemo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ReservasEstudiantes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ReservasBiblioDemo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ReservasEstudiantes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ReservasBiblioDemo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ReservasEstudiantes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ReservasBiblioDemo().setVisible(true);
+                new ReservasEstudiantes().setVisible(true);
             }
         });
     }
