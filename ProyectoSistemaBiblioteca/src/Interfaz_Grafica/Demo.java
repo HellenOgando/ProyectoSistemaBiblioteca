@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package proyectosistemabiblioteca;
+package Interfaz_Grafica;
 
 /**
  *
  * @author albe211
  */
-public class ProyectoSistemaBiblioteca {
+public class Demo {
 
     /**
      * @param args the command line arguments
