@@ -12,6 +12,7 @@ public class BDConexion {
         try{
         Class.forName("org.sqlite.JDBC");
         Connection conn = DriverManager.getConnection("jdb:sqlite:C:\\Users\\HellenFranchesca\\Documents\\NetBeansProjects\\ProyectoSistemaBiblioteca\\ProyectoSistemaBibliotecaBD.sqlite");
+        //Connection conn = DriverManager.getConnection("C:\\Users\\albe211\\Documents\\NetBeansProjects\\ProyectoSistemaBiblioteca\\bd\\ProyectoSistemaBibliotecaBD.sqlite");
         JOptionPane.showMessageDialog(null, "Connection Established");
         return conn;
         
