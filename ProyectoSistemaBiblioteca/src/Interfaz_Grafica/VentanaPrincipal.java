@@ -46,6 +46,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jMenu8 = new javax.swing.JMenu();
         jMenu5 = new javax.swing.JMenu();
         jMenu7 = new javax.swing.JMenu();
+        jMenu11 = new javax.swing.JMenu();
 
         jMenu1.setText("jMenu1");
 
@@ -144,6 +145,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jMenu7.setText("Gestionar Personal");
         jMenu5.add(jMenu7);
 
+        jMenu11.setText("Cambiar Contraseña");
+        jMenu5.add(jMenu11);
+
         jMenuBar1.add(jMenu5);
 
         setJMenuBar(jMenuBar1);
@@ -208,6 +212,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu10;
+    private javax.swing.JMenu jMenu11;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;

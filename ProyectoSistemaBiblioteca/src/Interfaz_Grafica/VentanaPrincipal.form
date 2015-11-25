@@ -76,6 +76,11 @@
                 <Property name="text" type="java.lang.String" value="Gestionar Personal"/>
               </Properties>
             </Menu>
+            <Menu class="javax.swing.JMenu" name="jMenu11">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Cambiar Contrase&#xf1;a"/>
+              </Properties>
+            </Menu>
           </SubComponents>
         </Menu>
       </SubComponents>
