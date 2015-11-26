@@ -84,7 +84,7 @@ if (datos instanceof Usuarios) {
         }
   }
   
-  public void acceder(String matricula, String password) {
+  public void acceder(String matricula, String password) {// metodo para el login 
         String TipoU = "";
         String Matric = "";
         String Pass = "";
@@ -142,6 +142,46 @@ if (datos instanceof Usuarios) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
 }
+  
+  public  boolean CambiarContraseña(int matricula, String ContraseñaActual , String ContraNew1, String ContraNew2){
+      String Pass ="";
+      String sql = "SELECT * FROM Usuarios WHERE Matricula='" + matricula + "' AND Contraseña='" + ContraseñaActual + "'";
+      //String sql2 ="UPDATE Usuarios SET Contraseña= '"+ContraNew1+"' WHERE Matricula='"+matricula+"'";
+       String sql2 ="UPDATE Usuarios SET Contraseña= ? WHERE Matricula = ?";
+      try {
+          Statement st = cnn.createStatement();
+          ResultSet rs = st.executeQuery(sql);
+           while (rs.next()) {
+               Pass=rs.getString("Contraseña");
+               
+           }
+           if ( !Pass.equals(ContraseñaActual)){
+                JOptionPane.showMessageDialog(null, " La Contraseña Actual es Incorrecta");
+                return false;
+                
+                
+            }
+           if (!ContraNew1.equals(ContraNew2)){
+               
+               JOptionPane.showMessageDialog(null, " Las Contraseñas Nuevas No Coinciden");
+               return false;
+           }else {
+           //JOptionPane.showMessageDialog(null, matricula +" "+ContraNew1  );
+           // st.executeQuery(sql2);
+           
+           pstm = cnn.prepareStatement(sql2);
+           pstm.setInt(2, matricula);
+           pstm.setString(1, ContraNew1);
+           pstm.executeUpdate();
+                   
+           JOptionPane.showMessageDialog(null, " Se ha Cambiado la Contraseña Correctamente");
+           }
+      }catch (SQLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return true;
+  }
+ 
 
 
 }

@@ -5,15 +5,28 @@
  */
 package Interfaz_Grafica;
 
+import BaseDeDatos.BDConexion;
+import static BaseDeDatos.BDSentencias.Matricula;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author albe211
  */
+
+
 public class CambiarContraseña extends javax.swing.JFrame {
 
     /**
      * Creates new form CambiarContraseña
      */
+    
+    
     public CambiarContraseña() {
         initComponents();
     }
@@ -32,9 +45,9 @@ public class CambiarContraseña extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jPasswordField1 = new javax.swing.JPasswordField();
-        jPasswordField2 = new javax.swing.JPasswordField();
-        jPasswordField3 = new javax.swing.JPasswordField();
+        ContraseñaActual = new javax.swing.JPasswordField();
+        ContraNueva = new javax.swing.JPasswordField();
+        ContraNueva2 = new javax.swing.JPasswordField();
         btnModificar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
 
@@ -84,9 +97,9 @@ public class CambiarContraseña extends javax.swing.JFrame {
                             .addComponent(jLabel3))
                         .addGap(29, 29, 29)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jPasswordField1)
-                            .addComponent(jPasswordField2)
-                            .addComponent(jPasswordField3, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(ContraseñaActual)
+                            .addComponent(ContraNueva)
+                            .addComponent(ContraNueva2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(52, 52, 52)
                         .addComponent(btnModificar)
@@ -100,15 +113,15 @@ public class CambiarContraseña extends javax.swing.JFrame {
                 .addGap(39, 39, 39)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel1)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ContraseñaActual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(30, 30, 30)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ContraNueva, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel3)
-                    .addComponent(jPasswordField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ContraNueva2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -149,14 +162,46 @@ public class CambiarContraseña extends javax.swing.JFrame {
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
         // TODO add your handling code here:
-
         
+         BaseDeDatos.BDSentencias CambiarContraseña;
+         int Matris = Integer.parseInt(Matricula);
+
+       if (ContraseñaActual.getText().equals("") ||ContraNueva.getText().equals("") || ContraNueva2.getText().equals("")){
+           
+            JOptionPane.showMessageDialog(null, "Llene las casillas en blanco");
+                return;
+       }
+       
+      
+           
+             try {
+                 CambiarContraseña = new BaseDeDatos.BDSentencias();
+                // CambiarContraseña.CambiarContraseña(Matricula, ContraseñaActual.getText(),ContraNueva.getText(),ContraNueva2.getText());
+                 
+                 if (CambiarContraseña.CambiarContraseña(Matris, ContraseñaActual.getText(),ContraNueva.getText(),ContraNueva2.getText())==false){
+                     
+                     ContraseñaActual.setText("");
+                     ContraNueva.setText("");
+                     ContraNueva2.setText("");
+                 }else{
+                    this.dispose();
+                     
+                 }
+             } catch (ClassNotFoundException ex) {
+                 Logger.getLogger(CambiarContraseña.class.getName()).log(Level.SEVERE, null, ex);
+             } catch (SQLException ex) {
+                 Logger.getLogger(CambiarContraseña.class.getName()).log(Level.SEVERE, null, ex);
+             }
+            
+       
 
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         
         // TODO add your handling code here:
+        
+         this.dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
@@ -195,6 +240,9 @@ public class CambiarContraseña extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPasswordField ContraNueva;
+    private javax.swing.JPasswordField ContraNueva2;
+    private javax.swing.JPasswordField ContraseñaActual;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnModificar;
     private javax.swing.JLabel jLabel1;
@@ -202,8 +250,5 @@ public class CambiarContraseña extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JPasswordField jPasswordField2;
-    private javax.swing.JPasswordField jPasswordField3;
     // End of variables declaration//GEN-END:variables
 }

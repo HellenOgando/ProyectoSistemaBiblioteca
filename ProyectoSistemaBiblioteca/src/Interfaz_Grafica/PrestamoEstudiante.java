@@ -5,6 +5,8 @@
  */
 package Interfaz_Grafica;
 
+import static BaseDeDatos.BDSentencias.Matricula;
+
 /**
  *
  * @author albe211
@@ -22,6 +24,7 @@ public class PrestamoEstudiante extends javax.swing.JFrame {
      public void  inicio(){
          
          TextField_UsuarioPrestamo.setEnabled(false);
+         TextField_UsuarioPrestamo.setText(Matricula);
      }
 
     /**

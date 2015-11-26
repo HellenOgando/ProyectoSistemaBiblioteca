@@ -91,7 +91,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jcMousePanel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/bibliotecageneral.jpg"))); // NOI18N
+        jcMousePanel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/biblio.jpg"))); // NOI18N
         jcMousePanel1.setVisibleLogo(false);
 
         javax.swing.GroupLayout jcMousePanel1Layout = new javax.swing.GroupLayout(jcMousePanel1);
@@ -102,7 +102,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         );
         jcMousePanel1Layout.setVerticalGroup(
             jcMousePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 227, Short.MAX_VALUE)
+            .addGap(0, 287, Short.MAX_VALUE)
         );
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Información", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
@@ -151,7 +151,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jMenuSistema.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/sistema_opt (1).jpg"))); // NOI18N
+        jMenuSistema.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/ico_pc_opt.png"))); // NOI18N
         jMenuSistema.setText("Sistema");
 
         jMenuItem1.setText("Cerrar Sesión");
@@ -172,7 +172,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenuSistema);
 
-        jMenuPrestamo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/prestamo_opt (1).jpg"))); // NOI18N
+        jMenuPrestamo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/Prestamo_opt.png"))); // NOI18N
         jMenuPrestamo.setText("Péstamos");
 
         jMenuRegistroPrestamo.setText("Registro de Prestamo");
@@ -218,6 +218,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jMenuUsuarios.add(jMenuGestionarUsuarios);
 
         jMenuCambiarContraseña.setText("Cambiar Contraseña");
+        jMenuCambiarContraseña.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuCambiarContraseñaActionPerformed(evt);
+            }
+        });
         jMenuUsuarios.add(jMenuCambiarContraseña);
 
         jMenuBar1.add(jMenuUsuarios);
@@ -234,7 +239,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jcMousePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jcMousePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -293,6 +298,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         a.setVisible(true);
         a.pack();
     }//GEN-LAST:event_jMenuRegistroPrestamoActionPerformed
+
+    private void jMenuCambiarContraseñaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuCambiarContraseñaActionPerformed
+        // TODO add your handling code here:
+        
+        CambiarContraseña a = new CambiarContraseña();
+        a.setVisible(true);
+        a.pack();
+    }//GEN-LAST:event_jMenuCambiarContraseñaActionPerformed
 
     /**
      * @param args the command line arguments

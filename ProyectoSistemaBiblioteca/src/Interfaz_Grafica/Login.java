@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class Login extends javax.swing.JFrame {
 
@@ -215,6 +216,12 @@ public class Login extends javax.swing.JFrame {
         Panel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Login\n", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Calibri", 1, 22), new java.awt.Color(255, 255, 255))); // NOI18N
         Panel4.setForeground(new java.awt.Color(255, 255, 255));
 
+        txtMatriculaID.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtMatriculaIDKeyTyped(evt);
+            }
+        });
+
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jLabel8.setText("Matricula/ID:");
 
@@ -329,6 +336,12 @@ public class Login extends javax.swing.JFrame {
         
         BaseDeDatos.BDSentencias accesoLogin;
         
+        if (Matricula.equals("") || pass.equals("")){
+            
+             JOptionPane.showMessageDialog(null, "Llene las casillas en blanco");
+                return;
+        }
+        
           try {
             accesoLogin = new BaseDeDatos.BDSentencias();
             accesoLogin.acceder(Matricula, pass);
@@ -355,6 +368,20 @@ public class Login extends javax.swing.JFrame {
         
         System.exit(0);
     }//GEN-LAST:event_btncancelar2ActionPerformed
+
+    private void txtMatriculaIDKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtMatriculaIDKeyTyped
+        // TODO add your handling code here:
+        
+         char c = evt.getKeyChar();
+
+        if (Character.isLetter(c)) {
+            getToolkit().beep();
+
+            evt.consume();
+
+              // JOptionPane.showMessageDialog(this, "Ingresa Solo Numeros");
+        }
+    }//GEN-LAST:event_txtMatriculaIDKeyTyped
 
     /**
      * @param args the command line arguments
