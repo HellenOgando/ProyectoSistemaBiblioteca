@@ -134,7 +134,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
             if (cbTipoDeUsuario.equals("Administrador")) {
                 ComboBox_TipoU.setSelectedIndex(1);
             }
-            if (cbTipoDeUsuario.equals("Usuario")) {
+            if (cbTipoDeUsuario.equals("Estudiante")) {
                 ComboBox_TipoU.setSelectedIndex(2);
             }
              if (cbSexo.equals("Masculino")) {
@@ -167,6 +167,9 @@ public class GestionUsuarios extends javax.swing.JFrame {
             }
          if (cbCarrera.equals("Ingeniería Industrial")) {
                 ComboBox_Carrera.setSelectedIndex(8);
+            }
+         if (cbCarrera.equals("")) {
+                ComboBox_Carrera.setSelectedIndex(9);
             }
         
              this.btnModificar.setEnabled(true);
@@ -479,7 +482,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
             }
         });
 
-        ComboBox_TipoU.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Seleccione", "Administrador", "Usuario" }));
+        ComboBox_TipoU.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Seleccione", "Administrador", "Estudiante" }));
 
         ComboBox_Sexo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Seleccione", "Masculino", "Femenino" }));
 

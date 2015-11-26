@@ -285,7 +285,7 @@
                   <StringArray count="3">
                     <StringItem index="0" value="Seleccione"/>
                     <StringItem index="1" value="Administrador"/>
-                    <StringItem index="2" value="Usuario"/>
+                    <StringItem index="2" value="Estudiante"/>
                   </StringArray>
                 </Property>
               </Properties>

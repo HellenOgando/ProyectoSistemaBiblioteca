@@ -5,18 +5,56 @@
  */
 package Interfaz_Grafica;
 
+import static BaseDeDatos.BDSentencias.Apellido;
+import static BaseDeDatos.BDSentencias.Matricula;
+import static BaseDeDatos.BDSentencias.Nombre;
+import static BaseDeDatos.BDSentencias.TipoUsuario;
+import javax.swing.JOptionPane;
+import static BaseDeDatos.BDSentencias.Aprobacion;
+
 /**
  *
  * @author albe211
  */
 public class VentanaPrincipal extends javax.swing.JFrame {
 
-    /**
-     * Creates new form AdminDemo
-     */
+    /*
+    static String Matricula;
+    static String TipoUsuario;
+    static String Nombre;
+    static String Apellido;
+    */
+    
     public VentanaPrincipal() {
         initComponents();
+        ColocarInofrmacion();
     }
+    
+    private void ColocarInofrmacion(){// en este metodo sirve para colocar la informacion del usuario ya logeado en los textos que tiene la Ventana Principal
+ 
+        txtMatriculaVP.setText(Matricula);
+        txtUsuarioVP.setText(Nombre + " "+ Apellido);
+        txtTipoUsuarioVP.setText(TipoUsuario);
+        
+        txtMatriculaVP.setEditable(false);
+        txtUsuarioVP.setEditable(false);
+        txtTipoUsuarioVP.setEditable(false);
+        
+        if (TipoUsuario.equals("Estudiante")){
+            
+            jMenuLibrosBiblioteca.setEnabled(false);
+            jMenuPrestamosBiblioteca.setEnabled(false);
+            jMenuGestionarUsuarios.setEnabled(false);
+        }
+        
+        if (TipoUsuario.equals("Administrador")){
+            jMenuRegistroPrestamo.setEnabled(false);
+            jMenuCambiarContraseña.setEnabled(false);
+            
+        }
+    }
+            
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -31,22 +69,23 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jcMousePanel1 = new jcMousePanel.jcMousePanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtUsuarioVP = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
+        txtTipoUsuarioVP = new javax.swing.JTextField();
+        txtMatriculaVP = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu4 = new javax.swing.JMenu();
-        jMenu10 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
-        jMenu9 = new javax.swing.JMenu();
-        jMenu3 = new javax.swing.JMenu();
-        jMenu6 = new javax.swing.JMenu();
-        jMenu8 = new javax.swing.JMenu();
-        jMenu5 = new javax.swing.JMenu();
-        jMenu7 = new javax.swing.JMenu();
-        jMenu11 = new javax.swing.JMenu();
+        jMenuSistema = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuSalir = new javax.swing.JMenuItem();
+        jMenuPrestamo = new javax.swing.JMenu();
+        jMenuRegistroPrestamo = new javax.swing.JMenuItem();
+        jMenuBiblioteca = new javax.swing.JMenu();
+        jMenuLibrosBiblioteca = new javax.swing.JMenuItem();
+        jMenuPrestamosBiblioteca = new javax.swing.JMenuItem();
+        jMenuUsuarios = new javax.swing.JMenu();
+        jMenuGestionarUsuarios = new javax.swing.JMenuItem();
+        jMenuCambiarContraseña = new javax.swing.JMenuItem();
 
         jMenu1.setText("jMenu1");
 
@@ -66,16 +105,16 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             .addGap(0, 227, Short.MAX_VALUE)
         );
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Información", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Información", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 14))); // NOI18N
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel1.setText("Nombre");
+        jLabel1.setText("Usuario:");
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel2.setText("Tipo");
+        jLabel2.setText("Tipo:");
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel3.setText("Matrícula");
+        jLabel3.setText("Matrícula:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -85,15 +124,15 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtMatriculaVP, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtUsuarioVP, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtTipoUsuarioVP, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(38, 38, 38))
         );
         jPanel1Layout.setVerticalGroup(
@@ -103,52 +142,85 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel3)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtMatriculaVP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel1)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtUsuarioVP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel2)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtTipoUsuarioVP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
-        jMenu4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/sistema_opt (1).jpg"))); // NOI18N
-        jMenu4.setText("Sistema");
+        jMenuSistema.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/sistema_opt (1).jpg"))); // NOI18N
+        jMenuSistema.setText("Sistema");
 
-        jMenu10.setText("Salir");
-        jMenu4.add(jMenu10);
+        jMenuItem1.setText("Cerrar Sesión");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenuSistema.add(jMenuItem1);
 
-        jMenuBar1.add(jMenu4);
+        jMenuSalir.setText("Salir");
+        jMenuSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuSalirActionPerformed(evt);
+            }
+        });
+        jMenuSistema.add(jMenuSalir);
 
-        jMenu2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/prestamo_opt (1).jpg"))); // NOI18N
-        jMenu2.setText("Péstamos");
+        jMenuBar1.add(jMenuSistema);
 
-        jMenu9.setText("Registro de Prestamo");
-        jMenu2.add(jMenu9);
+        jMenuPrestamo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/prestamo_opt (1).jpg"))); // NOI18N
+        jMenuPrestamo.setText("Péstamos");
 
-        jMenuBar1.add(jMenu2);
+        jMenuRegistroPrestamo.setText("Registro de Prestamo");
+        jMenuRegistroPrestamo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuRegistroPrestamoActionPerformed(evt);
+            }
+        });
+        jMenuPrestamo.add(jMenuRegistroPrestamo);
 
-        jMenu3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/ibros_opt.png"))); // NOI18N
-        jMenu3.setText("Biblioteca");
+        jMenuBar1.add(jMenuPrestamo);
 
-        jMenu6.setText("Libros");
-        jMenu3.add(jMenu6);
+        jMenuBiblioteca.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/ibros_opt.png"))); // NOI18N
+        jMenuBiblioteca.setText("Biblioteca");
 
-        jMenu8.setText("Reservas");
-        jMenu3.add(jMenu8);
+        jMenuLibrosBiblioteca.setText("Libros");
+        jMenuLibrosBiblioteca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuLibrosBibliotecaActionPerformed(evt);
+            }
+        });
+        jMenuBiblioteca.add(jMenuLibrosBiblioteca);
 
-        jMenuBar1.add(jMenu3);
+        jMenuPrestamosBiblioteca.setText("Historial P/R");
+        jMenuPrestamosBiblioteca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuPrestamosBibliotecaActionPerformed(evt);
+            }
+        });
+        jMenuBiblioteca.add(jMenuPrestamosBiblioteca);
 
-        jMenu5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/usarios_opt.png"))); // NOI18N
-        jMenu5.setText("Personal");
+        jMenuBar1.add(jMenuBiblioteca);
 
-        jMenu7.setText("Gestionar Personal");
-        jMenu5.add(jMenu7);
+        jMenuUsuarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/usarios_opt.png"))); // NOI18N
+        jMenuUsuarios.setText("Usuarios");
 
-        jMenu11.setText("Cambiar Contraseña");
-        jMenu5.add(jMenu11);
+        jMenuGestionarUsuarios.setText("Gestionar Usuarios");
+        jMenuGestionarUsuarios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuGestionarUsuariosActionPerformed(evt);
+            }
+        });
+        jMenuUsuarios.add(jMenuGestionarUsuarios);
 
-        jMenuBar1.add(jMenu5);
+        jMenuCambiarContraseña.setText("Cambiar Contraseña");
+        jMenuUsuarios.add(jMenuCambiarContraseña);
+
+        jMenuBar1.add(jMenuUsuarios);
 
         setJMenuBar(jMenuBar1);
 
@@ -156,7 +228,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jcMousePanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
+            .addComponent(jcMousePanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 614, Short.MAX_VALUE)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -169,6 +241,58 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jMenuLibrosBibliotecaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuLibrosBibliotecaActionPerformed
+        // TODO add your handling code here:
+        
+        GestionLibros a = new GestionLibros();
+        a.setVisible(true);
+        a.pack();
+    }//GEN-LAST:event_jMenuLibrosBibliotecaActionPerformed
+
+    private void jMenuSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuSalirActionPerformed
+        // TODO add your handling code here:
+        
+         System.exit(0);
+    }//GEN-LAST:event_jMenuSalirActionPerformed
+
+    private void jMenuGestionarUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuGestionarUsuariosActionPerformed
+        // TODO add your handling code here:
+        
+        GestionUsuarios a = new GestionUsuarios();
+        a.setVisible(true);
+        a.pack();
+    }//GEN-LAST:event_jMenuGestionarUsuariosActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+        
+        Aprobacion = 0;
+         Matricula =""; // variable que guardara la matricula del login para ponerlo en los otros frame
+        TipoUsuario="";
+            Nombre ="";
+           Apellido="";
+           Login a = new Login();
+           a.setVisible(true);
+           a.pack();
+           this.dispose();
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuPrestamosBibliotecaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuPrestamosBibliotecaActionPerformed
+        // TODO add your handling code here:
+        ReservasBiblioteca a = new ReservasBiblioteca();
+        a.setVisible(true);
+        a.pack();
+        
+    }//GEN-LAST:event_jMenuPrestamosBibliotecaActionPerformed
+
+    private void jMenuRegistroPrestamoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuRegistroPrestamoActionPerformed
+        // TODO add your handling code here:
+        
+        PrestamoEstudiante a = new PrestamoEstudiante();
+        a.setVisible(true);
+        a.pack();
+    }//GEN-LAST:event_jMenuRegistroPrestamoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -211,21 +335,22 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu10;
-    private javax.swing.JMenu jMenu11;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenu jMenu4;
-    private javax.swing.JMenu jMenu5;
-    private javax.swing.JMenu jMenu6;
-    private javax.swing.JMenu jMenu7;
-    private javax.swing.JMenu jMenu8;
-    private javax.swing.JMenu jMenu9;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu jMenuBiblioteca;
+    private javax.swing.JMenuItem jMenuCambiarContraseña;
+    private javax.swing.JMenuItem jMenuGestionarUsuarios;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuLibrosBiblioteca;
+    private javax.swing.JMenu jMenuPrestamo;
+    private javax.swing.JMenuItem jMenuPrestamosBiblioteca;
+    private javax.swing.JMenuItem jMenuRegistroPrestamo;
+    private javax.swing.JMenuItem jMenuSalir;
+    private javax.swing.JMenu jMenuSistema;
+    private javax.swing.JMenu jMenuUsuarios;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
     private jcMousePanel.jcMousePanel jcMousePanel1;
+    public javax.swing.JTextField txtMatriculaVP;
+    public javax.swing.JTextField txtTipoUsuarioVP;
+    public javax.swing.JTextField txtUsuarioVP;
     // End of variables declaration//GEN-END:variables
 }

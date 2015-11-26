@@ -4,6 +4,11 @@ package BaseDeDatos;
 import java.sql.*;
 import objetos.Usuarios;
 import Interfaz_Grafica.GestionUsuarios;
+import Interfaz_Grafica.Login;
+import Interfaz_Grafica.VentanaPrincipal;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 
 
@@ -12,10 +17,15 @@ public class BDSentencias {
     BDConexion miconexion1 = new BDConexion();
     PreparedStatement pstm = null;
     Connection cnn = miconexion1.Conexion1();
+    public static String Matricula =""; // variable que guardara la matricula del login para ponerlo en los otros frame
+    public static String TipoUsuario="";
+    public static String Nombre ="";
+    public static String Apellido="";
+    public static int Aprobacion = 0;// vatiable que se usa para saber si se logue el usuarioy cerrar la ventana del login
     
 
 
-public BDSentencias() throws ClassNotFoundException, SQLException {
+public  BDSentencias() throws ClassNotFoundException, SQLException {
     }
 
    PreparedStatement pstm(String insert_into__Invitados_Nom_EmpApe_EmpUsua) {
@@ -73,6 +83,66 @@ if (datos instanceof Usuarios) {
             pstm.execute();
         }
   }
+  
+  public void acceder(String matricula, String password) {
+        String TipoU = "";
+        String Matric = "";
+        String Pass = "";
+        String nombre = "" , apellido= ""; 
+        String sql = "SELECT * FROM Usuarios WHERE Matricula='" + matricula + "' AND Contraseña='" + password + "'";
+        try {
+            Statement st = cnn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+
+                TipoU = rs.getString("TipodeUsuario");
+                Matric = rs.getString("Matricula");
+                Pass = rs.getString("Contraseña");
+                nombre = rs.getString("Nombre");
+                apellido = rs.getString("Apellido");
+
+            }
+            if (!Matric.equals(matricula) && !Pass.equals(password)){
+                JOptionPane.showMessageDialog(null, " Matricula o Contraseña Incorrecta");
+                return;
+                
+            }
+            if (TipoU.equals("Administrador") || TipoU.equals("Estudiante")  ) {// cap.equals("Usuario")
+                
+                 Matricula = matricula;
+                TipoUsuario = TipoU;
+                Nombre = nombre;
+                Apellido = apellido;
+                Aprobacion = 1;
+                
+                
+                VentanaPrincipal q = new VentanaPrincipal();
+                q.setVisible(true);
+                q.pack();
+                
+                
+                
+                /* este metodo funciona tambien, solo que hay que poner public los textfields a los que seran enviados
+                
+                VentanaPrincipal q = new VentanaPrincipal();
+                q.txtMatriculaVP.setText(matricula);
+                q.txtUsuarioVP.setText(nombre + " " + apellido);
+                q.txtTipoUsuarioVP.setText(TipoU);
+                q.setVisible(true);
+                q.pack();
+                //JOptionPane.showMessageDialog(a, matricula);
+                
+                        */
+
+            }
+           
+           
+
+        } catch (SQLException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
+}
+
 
 }
 
