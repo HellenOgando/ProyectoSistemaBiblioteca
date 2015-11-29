@@ -39,9 +39,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
     public GestionUsuarios() {
 
         initComponents();
-
         RefrescarTabla();
-        
         inicio();
         //Tabla_Usuarios.setEnabled(false);
 
@@ -78,7 +76,62 @@ public class GestionUsuarios extends javax.swing.JFrame {
         
     }
     
+    private void RefrescarTablaBusqueda( String sql){
+        
+        try {
+
+            BDConexion miconexion = new BDConexion();
+          //  String cons = "SELECT * FROM Usuarios WHERE Nombre ='"+nombre+"'";
+          //    String cons = "SELECT * FROM Usuarios WHERE Nombre LIKE '%"+nombre+"%'";
+            ResultSet consultas = miconexion.consulta(sql);
+
+            ResultSetMetaData rsMd = consultas.getMetaData();
+            int numeroColumnas = rsMd.getColumnCount();
+
+            String titulos[] = {"Matrícula", "Nombre", "Apellido","Contraseña", "Tipo de Usuario", "Fecha de Nacimiento", "Sexo", "Carrera"};
+            DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+            this.Tabla_Usuarios.setModel(modelo);
+
+            while (consultas.next()) {
+                Object[] fila = new Object[numeroColumnas];
+                for (int y = 0; y < numeroColumnas; y++) {
+                    fila[y] = consultas.getObject(y + 1);
+                }
+                modelo.addRow(fila);
+            }
+
+        } catch (Exception e) {
+             System.out.println(e.getMessage());
+            
+        }
+        
+    }
     
+    
+    
+    private boolean EsunNumero (String textfield){// Metodo para saber si un textfield tiene solo numeros 
+        
+        
+        int i = 0;
+        if (textfield.charAt(0)=='-'){
+            
+            if (textfield.length()>1){
+                i++;
+            }else{
+                
+                return false;
+            }
+            
+        }
+        for (;i<textfield.length();i++){
+            if(!Character.isDigit(textfield.charAt(i))){
+              
+                return false;
+            }
+            
+        }
+        return true;
+    }
     
     private void inicio(){
         
@@ -86,6 +139,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
         txt_Nombre.setEnabled(false);
         txt_Apellido.setEnabled(false);
         txtContraseña.setEnabled(false);
+        txt_busqueda.setEnabled(false);
         ComboBox_TipoU.setEnabled(false);
         dc_fechanac.setEnabled(false);
         ComboBox_Sexo.setEnabled(false);
@@ -101,11 +155,15 @@ public class GestionUsuarios extends javax.swing.JFrame {
         txt_Nombre.setText(null);
         txt_Apellido.setText(null);
         txtContraseña.setText(null);
+        txt_busqueda.setText(null);
         ComboBox_TipoU.setSelectedIndex(0);
         dc_fechanac.setDate(null);
         ComboBox_Sexo.setSelectedIndex(0);
         ComboBox_Carrera.setSelectedIndex(0);
+        ComboBox_busqueda.setSelectedIndex(0);
         IDusu=0;
+        btnBusqueda.setEnabled(false);
+        ComboBox_busqueda.setEnabled(true);
         
     }
 
@@ -114,7 +172,9 @@ public class GestionUsuarios extends javax.swing.JFrame {
         if (this.Tabla_Usuarios.isEnabled()){
           String FechaNac;
          try {
-            int row = Tabla_Usuarios.getSelectedRow();
+            
+          //  int row = Tabla_Usuarios.getSelectedRow();//este se usa para seleccionar una fila de la tabla normalmente
+             int row = Tabla_Usuarios.convertRowIndexToModel(Tabla_Usuarios.getSelectedRow());// este se usa para seleccionar una fila de la tabla aun cuando se organiza de mayor a menor, etc
              DateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
 
             IDusu= (int) (Tabla_Usuarios.getModel().getValueAt(row, 0));
@@ -176,6 +236,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
              this.btnEliminar.setEnabled(true);
              this.btnNuevo.setEnabled(false);
               this.btnCancelar.setEnabled(true);
+              ComboBox_busqueda.setEnabled(false);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
@@ -288,6 +349,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
         btnGuardar.setEnabled(true);
         this.btnCancelar.setEnabled(true);
         Tabla_Usuarios.setEnabled(false);
+        ComboBox_busqueda.setEnabled(false);
     }
     
     private void Modificar(){ // boton Modificar
@@ -307,6 +369,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
         this.btnCancelar.setEnabled(true);
         btnGuardar.setText("Actualizar");
         Tabla_Usuarios.setEnabled(false);
+        ComboBox_busqueda.setEnabled(false);
     }
     
     private void Eliminar(){// boton Eliminar
@@ -410,6 +473,9 @@ public class GestionUsuarios extends javax.swing.JFrame {
         dc_fechanac = new com.toedter.calendar.JDateChooser();
         jLabel5 = new javax.swing.JLabel();
         txtContraseña = new javax.swing.JPasswordField();
+        txt_busqueda = new javax.swing.JTextField();
+        btnBusqueda = new javax.swing.JButton();
+        ComboBox_busqueda = new javax.swing.JComboBox();
         jLabel10 = new javax.swing.JLabel();
         btnNuevo = new javax.swing.JButton();
         btnGuardar = new javax.swing.JButton();
@@ -427,7 +493,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
 
         jLabel9.setText("Carrera:");
 
-        jLabel2.setText("Matrícula:");
+        jLabel2.setText("Matrícula/ID:");
 
         jLabel3.setText("Nombre:");
 
@@ -437,6 +503,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
 
         jLabel7.setText("Fecha de Nacimiento:");
 
+        Tabla_Usuarios.setAutoCreateRowSorter(true);
         Tabla_Usuarios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null},
@@ -493,6 +560,20 @@ public class GestionUsuarios extends javax.swing.JFrame {
 
         txtContraseña.setText("jPasswordField1");
 
+        btnBusqueda.setText("Busqueda");
+        btnBusqueda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBusquedaActionPerformed(evt);
+            }
+        });
+
+        ComboBox_busqueda.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Seleccione", "Matrícula/ID", "Nombre", "Apellido", "Carrera" }));
+        ComboBox_busqueda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ComboBox_busquedaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -500,6 +581,18 @@ public class GestionUsuarios extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
+                        .addGap(57, 57, 57)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(ComboBox_Sexo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txt_Nombre)
+                            .addComponent(txt_Matricula)
+                            .addComponent(txt_Apellido)
+                            .addComponent(ComboBox_TipoU, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(dc_fechanac, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ComboBox_Carrera, 0, 127, Short.MAX_VALUE)
+                            .addComponent(txtContraseña)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
@@ -510,62 +603,63 @@ public class GestionUsuarios extends javax.swing.JFrame {
                             .addComponent(jLabel7)
                             .addComponent(jLabel8)
                             .addComponent(jLabel9))
-                        .addGap(31, 31, 31))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
-                        .addGap(57, 57, 57)))
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(ComboBox_Sexo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txt_Nombre)
-                    .addComponent(txt_Matricula)
-                    .addComponent(txt_Apellido)
-                    .addComponent(ComboBox_TipoU, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(dc_fechanac, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ComboBox_Carrera, 0, 127, Short.MAX_VALUE)
-                    .addComponent(txtContraseña))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 499, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(12, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 499, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(ComboBox_busqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txt_busqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnBusqueda)
+                        .addGap(124, 124, 124))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(txt_Matricula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_Nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_Apellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(4, 4, 4)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtContraseña, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ComboBox_TipoU, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(8, 8, 8)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dc_fechanac, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ComboBox_Sexo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ComboBox_Carrera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(txt_Matricula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_Nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_Apellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(4, 4, 4)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtContraseña, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ComboBox_TipoU, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(8, 8, 8)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dc_fechanac, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ComboBox_Sexo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ComboBox_Carrera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ComboBox_busqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_busqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBusqueda))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
@@ -738,6 +832,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
 
     private void Tabla_UsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Tabla_UsuariosMouseClicked
         // TODO add your handling code here:
+        
       TocarJtabla();
     }//GEN-LAST:event_Tabla_UsuariosMouseClicked
 
@@ -757,14 +852,102 @@ public class GestionUsuarios extends javax.swing.JFrame {
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
 inicio();
+RefrescarTabla();
         // TODO add your handling code here:
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnCancelar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelar1ActionPerformed
         // TODO add your handling code here:
-        
-        this.dispose();
+          int reply = JOptionPane.showConfirmDialog(null, "¿Esta seguro que desea cerrar la ventana?", "Mensaje Confirmación", JOptionPane.YES_NO_OPTION);
+        if (reply == JOptionPane.YES_OPTION) {
+           this.dispose();
+        }
+        else {
+           
+        }
+       
     }//GEN-LAST:event_btnCancelar1ActionPerformed
+
+    private void btnBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBusquedaActionPerformed
+        // TODO add your handling code here:
+        String busquedaNombre =txt_busqueda.getText();
+        
+        String SeleccionBusqueda = (String) ComboBox_busqueda.getSelectedItem();
+        
+        if (busquedaNombre==null || busquedaNombre.isEmpty()){
+            JOptionPane.showMessageDialog(this, "El Campo esta vacio");
+            return;
+        }
+        
+        if (SeleccionBusqueda.equals("Matrícula/ID")){
+            if (EsunNumero(busquedaNombre)==false){
+                JOptionPane.showMessageDialog(this, "Solo se pueden introducir números");
+                txt_busqueda.setText(null);
+                
+                
+            }else {
+                /*
+                int busquedaMatricula = Integer.parseInt(busquedaNombre); 
+                RefrescarTablaBusquedaMatricula(busquedaMatricula);
+                */
+                String sql = "SELECT * FROM Usuarios WHERE Matricula LIKE '%"+busquedaNombre+"%'";
+            RefrescarTablaBusqueda(sql);
+                inicio();
+                btnCancelar.setEnabled(true);
+                btnNuevo.setEnabled(false);
+                /*
+               ComboBox_busqueda.setSelectedIndex(0);
+               txt_busqueda.setText(null);
+               btnBusqueda.setEnabled(false);
+              */ 
+            }
+            
+            
+        }
+         if (SeleccionBusqueda.equals("Nombre")){
+            
+            String sql = "SELECT * FROM Usuarios WHERE Nombre LIKE '%"+busquedaNombre+"%'";
+            RefrescarTablaBusqueda(sql);
+            inicio();
+            btnNuevo.setEnabled(false);
+            btnCancelar.setEnabled(true);
+        }
+         if (SeleccionBusqueda.equals("Apellido")){
+            String sql = "SELECT * FROM Usuarios WHERE Apellido LIKE '%"+busquedaNombre+"%'";
+            RefrescarTablaBusqueda(sql);
+            inicio();
+            btnNuevo.setEnabled(false);
+            btnCancelar.setEnabled(true);
+        }
+           if (SeleccionBusqueda.equals("Carrera")){
+            String sql = "SELECT * FROM Usuarios WHERE Carrera LIKE '%"+busquedaNombre+"%'";
+            RefrescarTablaBusqueda(sql);
+            inicio();
+            btnNuevo.setEnabled(false);
+            btnCancelar.setEnabled(true);
+        }
+         
+        
+        
+    }//GEN-LAST:event_btnBusquedaActionPerformed
+
+    private void ComboBox_busquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComboBox_busquedaActionPerformed
+        // TODO add your handling code here:
+        
+        String SeleccioneBusqueda= (String) ComboBox_busqueda.getSelectedItem();
+        
+        if(SeleccioneBusqueda.equals("Seleccione")){
+            
+         //   btnBusqueda.setEnabled(false);
+           // txt_busqueda.setEnabled(false);
+            inicio();
+        }else{
+            btnBusqueda.setEnabled(true);
+            txt_busqueda.setEnabled(true);
+            btnCancelar.setEnabled(true);
+            btnNuevo.setEnabled(false);
+        }
+    }//GEN-LAST:event_ComboBox_busquedaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -808,7 +991,9 @@ inicio();
     private javax.swing.JComboBox ComboBox_Carrera;
     private javax.swing.JComboBox ComboBox_Sexo;
     private javax.swing.JComboBox ComboBox_TipoU;
+    private javax.swing.JComboBox ComboBox_busqueda;
     private javax.swing.JTable Tabla_Usuarios;
+    private javax.swing.JButton btnBusqueda;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCancelar1;
     private javax.swing.JButton btnEliminar;
@@ -832,5 +1017,6 @@ inicio();
     private javax.swing.JTextField txt_Apellido;
     private javax.swing.JTextField txt_Matricula;
     private javax.swing.JTextField txt_Nombre;
+    private javax.swing.JTextField txt_busqueda;
     // End of variables declaration//GEN-END:variables
 }

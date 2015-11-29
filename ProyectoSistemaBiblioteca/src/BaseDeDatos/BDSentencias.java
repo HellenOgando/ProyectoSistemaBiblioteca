@@ -84,6 +84,8 @@ if (datos instanceof Usuarios) {
         }
   }
   
+ 
+  
   public void acceder(String matricula, String password) {// metodo para el login 
         String TipoU = "";
         String Matric = "";
@@ -102,11 +104,17 @@ if (datos instanceof Usuarios) {
                 apellido = rs.getString("Apellido");
 
             }
+            
+            
+          
+            
+           
             if (!Matric.equals(matricula) && !Pass.equals(password)){
                 JOptionPane.showMessageDialog(null, " Matricula o Contraseña Incorrecta");
                 return;
                 
             }
+            
             if (TipoU.equals("Administrador") || TipoU.equals("Estudiante")  ) {// cap.equals("Usuario")
                 
                  Matricula = matricula;
@@ -138,7 +146,7 @@ if (datos instanceof Usuarios) {
            
            
 
-        } catch (SQLException ex) {
+             } catch (SQLException ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
         }
 }

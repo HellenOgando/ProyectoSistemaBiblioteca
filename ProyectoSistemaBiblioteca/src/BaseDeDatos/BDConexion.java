@@ -40,7 +40,8 @@ public BDConexion() throws ClassNotFoundException, SQLException {
     try {
         //String ruta = ":SistemaBibliotecaBD.db";
        // String ruta = ":C:\\Users\\albe211\\Documents\\NetBeansProjects\\ProyectoSistemaBiblioteca\\bd\\SistemaBibliotecaBD.sqlite";
-        String ruta = ":C:\\Users\\albert\\Dropbox\\7mo Semestre\\Analisis y Diseno Sistema\\Sistema Final\\bd\\SistemaBibliotecaBD.sqlite";
+       // String ruta = ":C:\\Users\\albert\\Dropbox\\7mo Semestre\\Analisis y Diseno Sistema\\Sistema Final\\bd\\SistemaBibliotecaBD.sqlite";
+        String ruta = ":C:\\Users\\albe211\\Dropbox\\7mo Semestre\\Analisis y Diseno Sistema\\Sistema Final\\bd\\SistemaBibliotecaBD.sqlite";
       Class.forName("org.sqlite.JDBC");
       conect = DriverManager.getConnection("jdbc:sqlite"+ruta);
     } catch ( Exception e ) {
@@ -67,7 +68,8 @@ public BDConexion() throws ClassNotFoundException, SQLException {
         try {
         //String ruta = ":SistemaBibliotecaBD.db";
        // String ruta = ":C:\\Users\\albe211\\Documents\\NetBeansProjects\\ProyectoSistemaBiblioteca\\bd\\SistemaBibliotecaBD.sqlite";
-        String ruta = ":C:\\Users\\albert\\Dropbox\\7mo Semestre\\Analisis y Diseno Sistema\\Sistema Final\\bd\\SistemaBibliotecaBD.sqlite";
+     //   String ruta = ":C:\\Users\\albert\\Dropbox\\7mo Semestre\\Analisis y Diseno Sistema\\Sistema Final\\bd\\SistemaBibliotecaBD.sqlite";
+        String ruta = ":C:\\Users\\albe211\\Dropbox\\7mo Semestre\\Analisis y Diseno Sistema\\Sistema Final\\bd\\SistemaBibliotecaBD.sqlite";
       Class.forName("org.sqlite.JDBC");
       conect = DriverManager.getConnection("jdbc:sqlite"+ruta);
     } catch ( Exception e ) {
