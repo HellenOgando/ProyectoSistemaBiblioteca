@@ -408,6 +408,95 @@ public class GestionUsuarios extends javax.swing.JFrame {
             Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    private void busqueda (){
+         String busquedaNombre =txt_busqueda.getText();
+        
+        String SeleccionBusqueda = (String) ComboBox_busqueda.getSelectedItem();
+        
+        if (busquedaNombre==null || busquedaNombre.isEmpty()){
+            JOptionPane.showMessageDialog(this, "El Campo esta vacio");
+            return;
+        }
+        
+        if (SeleccionBusqueda.equals("Matrícula/ID")){
+            if (EsunNumero(busquedaNombre)==false){
+                JOptionPane.showMessageDialog(this, "Solo se pueden introducir números");
+                txt_busqueda.setText(null);
+                
+                
+            }else {
+                /*
+                int busquedaMatricula = Integer.parseInt(busquedaNombre); 
+                RefrescarTablaBusquedaMatricula(busquedaMatricula);
+                */
+                String sql = "SELECT * FROM Usuarios WHERE Matricula LIKE '%"+busquedaNombre+"%'";
+            RefrescarTablaBusqueda(sql);
+                inicio();
+                btnCancelar.setEnabled(true);
+                btnNuevo.setEnabled(false);
+                /*
+               ComboBox_busqueda.setSelectedIndex(0);
+               txt_busqueda.setText(null);
+               btnBusqueda.setEnabled(false);
+              */ 
+            }
+            
+            
+        }
+         if (SeleccionBusqueda.equals("Nombre")){
+            
+            String sql = "SELECT * FROM Usuarios WHERE Nombre LIKE '%"+busquedaNombre+"%'";
+            RefrescarTablaBusqueda(sql);
+            inicio();
+            btnNuevo.setEnabled(false);
+            btnCancelar.setEnabled(true);
+        }
+         if (SeleccionBusqueda.equals("Apellido")){
+            String sql = "SELECT * FROM Usuarios WHERE Apellido LIKE '%"+busquedaNombre+"%'";
+            RefrescarTablaBusqueda(sql);
+            inicio();
+            btnNuevo.setEnabled(false);
+            btnCancelar.setEnabled(true);
+        }
+           if (SeleccionBusqueda.equals("Carrera")){
+            String sql = "SELECT * FROM Usuarios WHERE Carrera LIKE '%"+busquedaNombre+"%'";
+            RefrescarTablaBusqueda(sql);
+            inicio();
+            btnNuevo.setEnabled(false);
+            btnCancelar.setEnabled(true);
+        }
+         
+        
+    }
+    
+    private void ComboBusqueda(){
+           String SeleccioneBusqueda= (String) ComboBox_busqueda.getSelectedItem();
+        
+        if(SeleccioneBusqueda.equals("Seleccione")){
+            
+         //   btnBusqueda.setEnabled(false);
+           // txt_busqueda.setEnabled(false);
+            inicio();
+        }else{
+            btnBusqueda.setEnabled(true);
+            txt_busqueda.setEnabled(true);
+            btnCancelar.setEnabled(true);
+            btnNuevo.setEnabled(false);
+        }
+        
+    }
+    
+    private void Salir(){
+           int reply = JOptionPane.showConfirmDialog(null, "¿Esta seguro que desea cerrar la ventana?", "Mensaje Confirmación", JOptionPane.YES_NO_OPTION);
+        if (reply == JOptionPane.YES_OPTION) {
+           this.dispose();
+        }
+        else {
+           
+        }
+        
+    }
     /*
     
     private void CargarTabla(){
@@ -518,6 +607,11 @@ public class GestionUsuarios extends javax.swing.JFrame {
         Tabla_Usuarios.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 Tabla_UsuariosMouseClicked(evt);
+            }
+        });
+        Tabla_Usuarios.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                Tabla_UsuariosKeyTyped(evt);
             }
         });
         jScrollPane1.setViewportView(Tabla_Usuarios);
@@ -858,75 +952,13 @@ RefrescarTabla();
 
     private void btnCancelar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelar1ActionPerformed
         // TODO add your handling code here:
-          int reply = JOptionPane.showConfirmDialog(null, "¿Esta seguro que desea cerrar la ventana?", "Mensaje Confirmación", JOptionPane.YES_NO_OPTION);
-        if (reply == JOptionPane.YES_OPTION) {
-           this.dispose();
-        }
-        else {
-           
-        }
+       Salir();
        
     }//GEN-LAST:event_btnCancelar1ActionPerformed
 
     private void btnBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBusquedaActionPerformed
         // TODO add your handling code here:
-        String busquedaNombre =txt_busqueda.getText();
-        
-        String SeleccionBusqueda = (String) ComboBox_busqueda.getSelectedItem();
-        
-        if (busquedaNombre==null || busquedaNombre.isEmpty()){
-            JOptionPane.showMessageDialog(this, "El Campo esta vacio");
-            return;
-        }
-        
-        if (SeleccionBusqueda.equals("Matrícula/ID")){
-            if (EsunNumero(busquedaNombre)==false){
-                JOptionPane.showMessageDialog(this, "Solo se pueden introducir números");
-                txt_busqueda.setText(null);
-                
-                
-            }else {
-                /*
-                int busquedaMatricula = Integer.parseInt(busquedaNombre); 
-                RefrescarTablaBusquedaMatricula(busquedaMatricula);
-                */
-                String sql = "SELECT * FROM Usuarios WHERE Matricula LIKE '%"+busquedaNombre+"%'";
-            RefrescarTablaBusqueda(sql);
-                inicio();
-                btnCancelar.setEnabled(true);
-                btnNuevo.setEnabled(false);
-                /*
-               ComboBox_busqueda.setSelectedIndex(0);
-               txt_busqueda.setText(null);
-               btnBusqueda.setEnabled(false);
-              */ 
-            }
-            
-            
-        }
-         if (SeleccionBusqueda.equals("Nombre")){
-            
-            String sql = "SELECT * FROM Usuarios WHERE Nombre LIKE '%"+busquedaNombre+"%'";
-            RefrescarTablaBusqueda(sql);
-            inicio();
-            btnNuevo.setEnabled(false);
-            btnCancelar.setEnabled(true);
-        }
-         if (SeleccionBusqueda.equals("Apellido")){
-            String sql = "SELECT * FROM Usuarios WHERE Apellido LIKE '%"+busquedaNombre+"%'";
-            RefrescarTablaBusqueda(sql);
-            inicio();
-            btnNuevo.setEnabled(false);
-            btnCancelar.setEnabled(true);
-        }
-           if (SeleccionBusqueda.equals("Carrera")){
-            String sql = "SELECT * FROM Usuarios WHERE Carrera LIKE '%"+busquedaNombre+"%'";
-            RefrescarTablaBusqueda(sql);
-            inicio();
-            btnNuevo.setEnabled(false);
-            btnCancelar.setEnabled(true);
-        }
-         
+       busqueda();
         
         
     }//GEN-LAST:event_btnBusquedaActionPerformed
@@ -934,20 +966,12 @@ RefrescarTabla();
     private void ComboBox_busquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComboBox_busquedaActionPerformed
         // TODO add your handling code here:
         
-        String SeleccioneBusqueda= (String) ComboBox_busqueda.getSelectedItem();
-        
-        if(SeleccioneBusqueda.equals("Seleccione")){
-            
-         //   btnBusqueda.setEnabled(false);
-           // txt_busqueda.setEnabled(false);
-            inicio();
-        }else{
-            btnBusqueda.setEnabled(true);
-            txt_busqueda.setEnabled(true);
-            btnCancelar.setEnabled(true);
-            btnNuevo.setEnabled(false);
-        }
+     ComboBusqueda();
     }//GEN-LAST:event_ComboBox_busquedaActionPerformed
+
+    private void Tabla_UsuariosKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_Tabla_UsuariosKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_Tabla_UsuariosKeyTyped
 
     /**
      * @param args the command line arguments

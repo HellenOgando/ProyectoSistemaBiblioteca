@@ -9,6 +9,7 @@ import Interfaz_Grafica.VentanaPrincipal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import objetos.Carrera;
 
 
 
@@ -52,6 +53,15 @@ if (datos instanceof Usuarios) {
             pstm.setString(8, inv.getCarrera());
             pstm.executeUpdate();
         }
+
+if (datos instanceof Carrera) {
+    Carrera inv = (Carrera) datos;
+     String sql = "INSERT into  Carrera  VALUES (?,?)";
+     pstm = cnn.prepareStatement(sql);
+            pstm.setString(1, inv.getCodigoCarrera());
+            pstm.setString(2, inv.getDescripcion());
+            pstm.executeUpdate();
+}
 }
 
  public void update(Object datos) throws SQLException {
@@ -71,6 +81,15 @@ if (datos instanceof Usuarios) {
             pstm.setInt(8, inv.getMatricula());
             pstm.execute();
         }
+     
+     if (datos instanceof Carrera) {
+         Carrera inv = (Carrera) datos;
+     String sql = "UPDATE Carrera SET Descripcion=? WHERE CodigoCarrera=?";
+      pstm = cnn.prepareStatement(sql);
+     pstm.setString(2, inv.getCodigoCarrera());
+     pstm.setString(1, inv.getDescripcion());
+     pstm.execute();
+     }
  }
  
   public void delete(Object datos) throws SQLException {
@@ -82,6 +101,16 @@ if (datos instanceof Usuarios) {
             pstm.setInt(1, users.getMatricula());
             pstm.execute();
         }
+       
+       if (datos instanceof Carrera) {
+           
+           Carrera inv = (Carrera) datos;
+           String sql = "DELETE FROM Carrera WHERE CodigoCarrera=?";
+           pstm = cnn.prepareStatement(sql);
+           pstm.setString(1, inv.getCodigoCarrera());
+           pstm.execute();
+
+       }
   }
   
  
