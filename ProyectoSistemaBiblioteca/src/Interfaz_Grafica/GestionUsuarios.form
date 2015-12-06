@@ -325,17 +325,8 @@
             <Component class="javax.swing.JComboBox" name="ComboBox_Carrera">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="10">
+                  <StringArray count="1">
                     <StringItem index="0" value="Seleccione"/>
-                    <StringItem index="1" value="Administraci&#xf3;n"/>
-                    <StringItem index="2" value="Mercadeo"/>
-                    <StringItem index="3" value="Publicidad"/>
-                    <StringItem index="4" value="Abogado"/>
-                    <StringItem index="5" value="Psicolog&#xed;a"/>
-                    <StringItem index="6" value="TIC"/>
-                    <StringItem index="7" value="Ingenier&#xed;a Civil"/>
-                    <StringItem index="8" value="Ingenier&#xed;a Industrial"/>
-                    <StringItem index="9" value=" "/>
                   </StringArray>
                 </Property>
               </Properties>

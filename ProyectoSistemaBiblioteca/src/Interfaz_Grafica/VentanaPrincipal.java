@@ -45,6 +45,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             jMenuLibrosBiblioteca.setEnabled(false);
             jMenuPrestamosBiblioteca.setEnabled(false);
             jMenuGestionarUsuarios.setEnabled(false);
+            jMenuItemCarreras.setEnabled(false);
         }
         
         if (TipoUsuario.equals("Administrador")){
@@ -85,6 +86,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jMenuPrestamosBiblioteca = new javax.swing.JMenuItem();
         jMenuUsuarios = new javax.swing.JMenu();
         jMenuGestionarUsuarios = new javax.swing.JMenuItem();
+        jMenuItemCarreras = new javax.swing.JMenuItem();
         jMenuCambiarContraseña = new javax.swing.JMenuItem();
 
         jMenu1.setText("jMenu1");
@@ -217,6 +219,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
         jMenuUsuarios.add(jMenuGestionarUsuarios);
 
+        jMenuItemCarreras.setText("Gestionar Carreras");
+        jMenuItemCarreras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemCarrerasActionPerformed(evt);
+            }
+        });
+        jMenuUsuarios.add(jMenuItemCarreras);
+
         jMenuCambiarContraseña.setText("Cambiar Contraseña");
         jMenuCambiarContraseña.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -307,6 +317,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         a.pack();
     }//GEN-LAST:event_jMenuCambiarContraseñaActionPerformed
 
+    private void jMenuItemCarrerasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemCarrerasActionPerformed
+        // TODO add your handling code here:
+        
+         GestionCarrera a = new GestionCarrera();
+        a.setVisible(true);
+        a.pack();
+    }//GEN-LAST:event_jMenuItemCarrerasActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -353,6 +371,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuCambiarContraseña;
     private javax.swing.JMenuItem jMenuGestionarUsuarios;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItemCarreras;
     private javax.swing.JMenuItem jMenuLibrosBiblioteca;
     private javax.swing.JMenu jMenuPrestamo;
     private javax.swing.JMenuItem jMenuPrestamosBiblioteca;

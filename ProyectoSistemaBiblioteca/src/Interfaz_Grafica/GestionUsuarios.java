@@ -8,11 +8,13 @@ package Interfaz_Grafica;
 import java.sql.*;
 import javax.swing.*;
 import BaseDeDatos.BDConexion;
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,6 +43,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
         initComponents();
         RefrescarTabla();
         inicio();
+        ComboBoxBD();
         //Tabla_Usuarios.setEnabled(false);
 
     }
@@ -164,9 +167,71 @@ public class GestionUsuarios extends javax.swing.JFrame {
         IDusu=0;
         btnBusqueda.setEnabled(false);
         ComboBox_busqueda.setEnabled(true);
+         // prueba();    
+      
+             //  JOptionPane.showMessageDialog(this, totalRow);
+    }
+    
+    private void prueba(){
         
+        try {
+            BDConexion miconexion = new BDConexion();
+            String cons = "SELECT * FROM Carrera";
+            ResultSet consultas = miconexion.consulta(cons);
+            //  JOptionPane.showMessageDialog(this, totalRow);
+               int h=0;       
+            ArrayList<String> list = new ArrayList<String>();
+            while (consultas.next()) {
+                list.add(consultas.getString("Descripcion"));
+                h++;
+            }
+
+            String[] result = new String[list.size()];
+            result = list.toArray(result);
+           
+      /*            
+        String UnaCarrera;
+        String[]LasCarreras2=new String[h];
+        while(consultas.next()){
+            String[]LasCarreras=new String[h];
+         for (int i = 0; i < h; i++) {
+          // while(consultas.next()){// cuenta cuantas filas tiene la tabla de carreras
+                UnaCarrera = consultas.getString(i+1);
+                LasCarreras[i]= UnaCarrera;
+         }
+         LasCarreras2 =LasCarreras;
+        }    
+        */ 
+         JOptionPane.showMessageDialog(this, Arrays.toString(result) + h);
+      
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
+    private void ComboBoxBD(){
+        
+        //ComboBox_Carrera.removeAllItems();
+        
+        try {
+            
+            BDConexion miconexion = new BDConexion();
+            String cons = "SELECT * FROM Carrera";
+            ResultSet consultas = miconexion.consulta(cons);
+            
+            while(consultas.next()){
+                
+                ComboBox_Carrera.addItem(consultas.getString("Descripcion"));
+            }
+            
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     private void TocarJtabla(){
         
         if (this.Tabla_Usuarios.isEnabled()){
@@ -203,7 +268,29 @@ public class GestionUsuarios extends javax.swing.JFrame {
                if (cbSexo.equals("Femenino")) {
                 ComboBox_Sexo.setSelectedIndex(2);
             }
+               
+                    BDConexion miconexion = new BDConexion();
+            String cons = "SELECT * FROM Carrera";
+            ResultSet consultas = miconexion.consulta(cons);
+            //  JOptionPane.showMessageDialog(this, totalRow);
+               int h=0;       
+            ArrayList<String> list = new ArrayList<String>();
+            while (consultas.next()) {
+                list.add(consultas.getString("Descripcion"));// se agrega al array toda la info que haya en la columna descripcion de la tabla carrera
+                h++;
+            }
+
+            String[] result = new String[list.size()];
+            result = list.toArray(result);
+            
+            for(int i=0;i<result.length;i++){
+    if(cbCarrera.equals(result[i])){ //aqui se compara la carrera que fue seleccionada en la tabla con el array donde se guarddaron todas las carreras
+       
+        ComboBox_Carrera.setSelectedItem(cbCarrera);
+                
         
+    }}
+        /*
          if (cbCarrera.equals("Administración")) {
                 ComboBox_Carrera.setSelectedIndex(1);
             }
@@ -231,6 +318,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
          if (cbCarrera.equals("")) {
                 ComboBox_Carrera.setSelectedIndex(9);
             }
+            */
         
              this.btnModificar.setEnabled(true);
              this.btnEliminar.setEnabled(true);
@@ -648,7 +736,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
 
         ComboBox_Sexo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Seleccione", "Masculino", "Femenino" }));
 
-        ComboBox_Carrera.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Seleccione", "Administración", "Mercadeo", "Publicidad", "Abogado", "Psicología", "TIC", "Ingeniería Civil", "Ingeniería Industrial", " " }));
+        ComboBox_Carrera.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Seleccione" }));
 
         jLabel5.setText("Contraseña:");
 
