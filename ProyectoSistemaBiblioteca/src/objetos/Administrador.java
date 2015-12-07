@@ -7,7 +7,7 @@ package objetos;
 
 /**
  *
- * @author HellenFranchesca
+ * @author HellenFranchesca :D
  */
 public class Administrador {
     int Codigo;
