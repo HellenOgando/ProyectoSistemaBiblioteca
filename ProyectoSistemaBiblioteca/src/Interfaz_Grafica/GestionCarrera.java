@@ -81,7 +81,7 @@ public class GestionCarrera extends javax.swing.JFrame {
          try {
 
             BDConexion miconexion = new BDConexion();
-            String cons = "SELECT * FROM Carrera";
+            String cons = "SELECT * FROM Carreras";
             
             ResultSet consultas = miconexion.consulta(cons);
 
@@ -175,8 +175,8 @@ public class GestionCarrera extends javax.swing.JFrame {
       
        
         objetos.Carrera Carrera = new objetos.Carrera( txt_CodigoCarrera.getText(), TextArea_Descripcion.getText());
-        BaseDeDatos.BDSentencias insert;
-        BaseDeDatos.BDSentencias update;
+        BaseDeDatos.BDSentenciasEST insert;
+        BaseDeDatos.BDSentenciasEST update;
          
          if (!IDusu.equals(""))// esta variable es utilizada para saber si se va a guardar o actualizar los datos
         {
@@ -187,7 +187,7 @@ public class GestionCarrera extends javax.swing.JFrame {
              
             
             if(!IDusu.equals("")){
-            update = new BaseDeDatos.BDSentencias();
+            update = new BaseDeDatos.BDSentenciasEST();
                 update.update(Carrera);
                 JOptionPane.showMessageDialog(null, "Actualizado Correctamente");
                 IDusu="";
@@ -195,7 +195,7 @@ public class GestionCarrera extends javax.swing.JFrame {
                 inicio();
             }
             else {
-                insert = new BaseDeDatos.BDSentencias();
+                insert = new BaseDeDatos.BDSentenciasEST();
                 insert.insert(Carrera);
                 JOptionPane.showMessageDialog(null, "Guardado Correctamente");
                 RefrescarTabla();
@@ -243,8 +243,8 @@ public class GestionCarrera extends javax.swing.JFrame {
             
 
                 objetos.Carrera Carrera  =  new objetos.Carrera( txt_CodigoCarrera.getText(), TextArea_Descripcion.getText());
-                BaseDeDatos.BDSentencias delete;
-                delete = new BaseDeDatos.BDSentencias();
+                BaseDeDatos.BDSentenciasEST delete;
+                delete = new BaseDeDatos.BDSentenciasEST();
                 delete.delete(Carrera);
                 JOptionPane.showMessageDialog(null, "Eliminado Correctamente");
                 IDusu="";

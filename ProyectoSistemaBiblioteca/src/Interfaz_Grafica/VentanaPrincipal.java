@@ -5,12 +5,12 @@
  */
 package Interfaz_Grafica;
 
-import static BaseDeDatos.BDSentencias.Apellido;
-import static BaseDeDatos.BDSentencias.Matricula;
-import static BaseDeDatos.BDSentencias.Nombre;
-import static BaseDeDatos.BDSentencias.TipoUsuario;
+import static BaseDeDatos.BDSentenciasEST.Apellido;
+import static BaseDeDatos.BDSentenciasEST.Matricula;
+import static BaseDeDatos.BDSentenciasEST.Nombre;
+import static BaseDeDatos.BDSentenciasEST.TipoUsuario;
 import javax.swing.JOptionPane;
-import static BaseDeDatos.BDSentencias.Aprobacion;
+import static BaseDeDatos.BDSentenciasEST.Aprobacion;
 
 /**
  *

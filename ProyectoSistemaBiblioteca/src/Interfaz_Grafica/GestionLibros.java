@@ -5,19 +5,260 @@
  */
 package Interfaz_Grafica;
 
+import BaseDeDatos.BDConexion;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author albe211
  */
 public class GestionLibros extends javax.swing.JFrame {
 
-    /**
-     * Creates new form LibrosDemo
-     */
+   
+int IDLibro;
+
     public GestionLibros() {
         initComponents();
+        inicio();
+        RefrescarTabla();
+        
+        
     }
 
+    private void inicio(){
+        
+        idlibroTextField.setEnabled(false);
+        tituloTextField.setEnabled(false);
+        autorTextField.setEnabled(false);
+        lugarPublicacionTextField.setEnabled(false);
+        publicacionYearChooser.setEnabled(false);
+        edicionTextField.setEnabled(false);
+        editorialTextField.setEnabled(false);
+        numPagTextField.setEnabled(false);
+        cantSpinField.setEnabled(true);
+        codUbiTextField.setEnabled(false);
+        nuevoBtn.setEnabled(true);
+        guardarBtn.setEnabled(false);
+        modificarBtn.setEnabled(false);
+        eliminarBtn.setEnabled(false);
+        librosTabla.setEnabled(true);
+        IDLibro=0;
+        tituloTextField.setText(null);
+        autorTextField.setText(null);
+        publicacionYearChooser.setYear(2015);
+        lugarPublicacionTextField.setText(null);
+        edicionTextField.setText(null);
+        editorialTextField.setText(null);
+        numPagTextField.setText(null);
+        cantSpinField.setValue(0);
+        codUbiTextField.setText(null);
+        
+    }
+    private void Nuevo(){ // boton Nuevo
+        
+        idlibroTextField.setEnabled(true);
+        tituloTextField.setEnabled(true);
+        autorTextField.setEnabled(true);
+        lugarPublicacionTextField.setEnabled(true);
+        publicacionYearChooser.setEnabled(true);
+        edicionTextField.setEnabled(true);
+        editorialTextField.setEnabled(true);
+        numPagTextField.setEnabled(true);
+        cantSpinField.setEnabled(true);
+        codUbiTextField.setEnabled(true);
+        guardarBtn.setEnabled(true);
+        modificarBtn.setEnabled(false);
+        eliminarBtn.setEnabled(false);
+        librosTabla.setEnabled(true);
+        nuevoBtn.setEnabled(false);
+        
+    }
+    private void RefrescarTabla() {// metodo para que aparesca en la tabla los elementos de la base de datos
+
+        try {
+
+            BDConexion miconexion = new BDConexion();
+            String cons = "SELECT * FROM Libros";
+            ResultSet consultas = miconexion.consulta(cons);
+
+            ResultSetMetaData rsMd = consultas.getMetaData();
+            int numeroColumnas = rsMd.getColumnCount();
+
+            String titulos[] = {"ID", "Titulo", "Autor/es", "Lugar de Publicación", "Año de Publicación", "Edicion", "Editorial", "Numero de Páginas", "Cantidad", "Codigo de Ubicación"};
+            DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+            this.librosTabla.setModel(modelo);
+
+            while (consultas.next()) {
+                Object[] fila = new Object[numeroColumnas];
+                for (int y = 0; y < numeroColumnas; y++) {
+                    fila[y] = consultas.getObject(y + 1);
+                }
+                modelo.addRow(fila);
+            }
+
+        } catch (Exception e) {
+             System.out.println(e.getMessage());
+            
+        }
+        
+        
+    }
+    
+    
+    private void Guardar(){// boton Guardar
+        
+        objetos.Libros ActualizarLibro = null;  //Para actulizar libro 
+         
+         String anPub = Integer.toString(publicacionYearChooser.getYear());
+         String cant = Integer.toString(cantSpinField.getValue());
+         if (idlibroTextField.getText().equals("") || tituloTextField.getText().equals("") || autorTextField.getText().equals("") || lugarPublicacionTextField.getText().equals("") ||  edicionTextField.getText().equals("")|| editorialTextField.getText().equals("") || numPagTextField.getText().equals("") || anPub.equals("") || cant.equals("")) {
+                JOptionPane.showMessageDialog(null, "Llene las casillas en blanco");
+                return;
+          }
+       
+        
+        objetos.Libros libro = new objetos.Libros(Integer.parseInt(idlibroTextField.getText()), tituloTextField.getText(), autorTextField.getText(), anPub, lugarPublicacionTextField.getText(), edicionTextField.getText(), editorialTextField.getText(), numPagTextField.getText(), cant, codUbiTextField.getText());
+        BaseDeDatos.BDSentenciasLIB insert;
+        BaseDeDatos.BDSentenciasLIB update;
+        
+         
+         if (IDLibro!=0)// esta variable es utilizada para saber si se va a guardar o actualizar los datos
+        {
+        objetos.Libros libroActualizado = new objetos.Libros(IDLibro, tituloTextField.getText(), autorTextField.getText(), anPub, lugarPublicacionTextField.getText(), edicionTextField.getText(), editorialTextField.getText(), numPagTextField.getText(), cant, codUbiTextField.getText());
+        }
+         
+       try {           
+            if(IDLibro!=0){
+            update = new BaseDeDatos.BDSentenciasLIB();
+                update.updateLibros(libro);
+                JOptionPane.showMessageDialog(null, "Actualizado Correctamente");
+                IDLibro=0;
+                tituloTextField.setText(null);
+                autorTextField.setText(null);
+                publicacionYearChooser.setYear(2015);
+                lugarPublicacionTextField.setText(null);
+                edicionTextField.setText(null);
+                editorialTextField.setText(null);
+                numPagTextField.setText(null);
+                cantSpinField.setValue(0);
+                codUbiTextField.setText(null);
+                RefrescarTabla();
+                inicio();
+            }
+            else {
+                insert = new BaseDeDatos.BDSentenciasLIB();
+                insert.insertLibros(libro);
+                IDLibro=0;
+                tituloTextField.setText(null);
+                autorTextField.setText(null);
+                publicacionYearChooser.setYear(2015);
+                lugarPublicacionTextField.setText(null);
+                edicionTextField.setText(null);
+                editorialTextField.setText(null);
+                numPagTextField.setText(null);
+                cantSpinField.setValue(0);
+                codUbiTextField.setText(null);
+                RefrescarTabla();
+                inicio();
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void Modificar(){
+        
+        idlibroTextField.setEnabled(false);
+        tituloTextField.setEnabled(true);
+        autorTextField.setEnabled(true);
+        lugarPublicacionTextField.setEnabled(true);
+        publicacionYearChooser.setEnabled(true);
+        edicionTextField.setEnabled(true);
+        editorialTextField.setEnabled(true);
+        numPagTextField.setEnabled(true);
+        cantSpinField.setEnabled(true);
+        codUbiTextField.setEnabled(true);
+        nuevoBtn.setEnabled(false);
+        guardarBtn.setEnabled(true);
+        modificarBtn.setEnabled(false);
+        eliminarBtn.setEnabled(false);
+        this.btnCancelar.setEnabled(true);
+        guardarBtn.setText("Actualizar");
+        librosTabla.setEnabled(true);
+    }
+    
+    private void Eliminar(){// boton Eliminar
+        
+        try {
+            if (IDLibro==0) {
+                JOptionPane.showMessageDialog(null, "Seleccione un Usuario de la Tabla para eliminarlo");
+            } else {
+         String anPub = Integer.toString(publicacionYearChooser.getYear());
+         String cant = Integer.toString(cantSpinField.getValue());
+                int row = librosTabla.getSelectedRow();
+                int IdLib = (int) (librosTabla.getModel().getValueAt(row, 0));
+                objetos.Libros libro = new objetos.Libros(IdLib, tituloTextField.getText(), autorTextField.getText(), anPub, lugarPublicacionTextField.getText(), edicionTextField.getText(), editorialTextField.getText(), numPagTextField.getText(), cant, codUbiTextField.getText());
+                BaseDeDatos.BDSentenciasLIB deleteLibro;
+                deleteLibro = new BaseDeDatos.BDSentenciasLIB();
+                deleteLibro.deleteLibro(libro);
+                JOptionPane.showMessageDialog(null, "Eliminado Correctamente");
+                IDLibro=0;
+                tituloTextField.setText(null);
+                autorTextField.setText(null);
+                publicacionYearChooser.setYear(2015);
+                lugarPublicacionTextField.setText(null);
+                edicionTextField.setText(null);
+                editorialTextField.setText(null);
+                numPagTextField.setText(null);
+                cantSpinField.setValue(0);
+                codUbiTextField.setText(null);
+                RefrescarTabla();
+                inicio();
+        
+                
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+     private void TocarJtabla(){
+        
+        if (this.librosTabla.isEnabled()){
+          String FechaNac;
+         try {
+            int row = librosTabla.getSelectedRow();
+             
+            tituloTextField.setText(librosTabla.getModel().getValueAt(row, 1).toString());
+            autorTextField.setText(librosTabla.getModel().getValueAt(row, 2).toString());
+            lugarPublicacionTextField.setText(librosTabla.getModel().getValueAt(row, 3).toString());
+            publicacionYearChooser.setYear(Integer.parseInt(librosTabla.getModel().getValueAt(row, 4).toString()));
+            edicionTextField.setText(librosTabla.getModel().getValueAt(row, 5).toString());
+            editorialTextField.setText(librosTabla.getModel().getValueAt(row, 6).toString());
+            numPagTextField.setText(librosTabla.getModel().getValueAt(row, 7).toString());
+            cantSpinField.setValue(Integer.parseInt(librosTabla.getModel().getValueAt(row, 8).toString()));
+            codUbiTextField.setText(librosTabla.getModel().getValueAt(row, 9).toString());
+            
+        
+             this.modificarBtn.setEnabled(true);
+             this.eliminarBtn.setEnabled(true);
+             this.nuevoBtn.setEnabled(false);
+              this.btnCancelar.setEnabled(true);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,43 +269,62 @@ public class GestionLibros extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jButton3 = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        modificarBtn = new javax.swing.JButton();
+        guardarBtn = new javax.swing.JButton();
+        nuevoBtn = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField6 = new javax.swing.JTextField();
+        idlibroTextField = new javax.swing.JTextField();
+        edicionTextField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
+        editorialTextField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        tituloTextField = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField8 = new javax.swing.JTextField();
+        autorTextField = new javax.swing.JTextField();
+        numPagTextField = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        lugarPublicacionTextField = new javax.swing.JTextField();
+        publicacionYearChooser = new com.toedter.calendar.JYearChooser();
+        cantSpinField = new com.toedter.components.JSpinField();
+        jLabel11 = new javax.swing.JLabel();
+        codUbiTextField = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jYearChooser1 = new com.toedter.calendar.JYearChooser();
-        jSpinField1 = new com.toedter.components.JSpinField();
-        btnnuevo3 = new javax.swing.JButton();
+        librosTabla = new javax.swing.JTable();
+        eliminarBtn = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
+        salirBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/img_editar.png"))); // NOI18N
-        jButton3.setText("Modificar");
+        modificarBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/img_editar.png"))); // NOI18N
+        modificarBtn.setText("Modificar");
+        modificarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modificarBtnActionPerformed(evt);
+            }
+        });
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/img_guardar.png"))); // NOI18N
-        jButton1.setText("Guardar");
+        guardarBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/img_guardar.png"))); // NOI18N
+        guardarBtn.setText("Guardar");
+        guardarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guardarBtnActionPerformed(evt);
+            }
+        });
 
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/img_nuevo.png"))); // NOI18N
-        jButton2.setText("Nuevo");
+        nuevoBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/img_nuevo.png"))); // NOI18N
+        nuevoBtn.setText("Nuevo");
+        nuevoBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nuevoBtnActionPerformed(evt);
+            }
+        });
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel10.setText("Gestión de Libros");
@@ -76,9 +336,9 @@ public class GestionLibros extends javax.swing.JFrame {
 
         jLabel5.setText("Edición:");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        idlibroTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                idlibroTextFieldActionPerformed(evt);
             }
         });
 
@@ -96,7 +356,9 @@ public class GestionLibros extends javax.swing.JFrame {
 
         jLabel9.setText("Cantidad:");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jLabel11.setText("Codigo Ubicación:");
+
+        librosTabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null},
@@ -107,7 +369,7 @@ public class GestionLibros extends javax.swing.JFrame {
                 "ID", "Titulo", "Autor/es", "Lugar de publicacion", "Año de Publicacion ", "Edicion", "Editorial", "Numero de paginas", "Cantidad"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(librosTabla);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -116,6 +378,10 @@ public class GestionLibros extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel11)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
@@ -124,79 +390,94 @@ public class GestionLibros extends javax.swing.JFrame {
                             .addComponent(jLabel7)
                             .addComponent(jLabel8)
                             .addComponent(jLabel9))
-                        .addGap(18, 18, 18)
+                        .addGap(66, 66, 66)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jYearChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jSpinField1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(71, 71, 71)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28))
+                            .addComponent(codUbiTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(numPagTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(editorialTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(edicionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lugarPublicacionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(publicacionYearChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(cantSpinField, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(autorTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(tituloTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(idlibroTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(40, 40, 40)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 544, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(32, Short.MAX_VALUE)
+                .addContainerGap(27, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(idlibroTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(tituloTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(autorTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(lugarPublicacionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(publicacionYearChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(8, 8, 8)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(edicionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(editorialTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(numPagTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cantSpinField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jYearChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(8, 8, 8)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSpinField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(20, 20, 20))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(codUbiTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
-        btnnuevo3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/img_eliminar.png"))); // NOI18N
-        btnnuevo3.setText("Eliminar");
-        btnnuevo3.addActionListener(new java.awt.event.ActionListener() {
+        eliminarBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/img_eliminar.png"))); // NOI18N
+        eliminarBtn.setText("Eliminar");
+        eliminarBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnnuevo3ActionPerformed(evt);
+                eliminarBtnActionPerformed(evt);
+            }
+        });
+
+        btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/img_Cancel.png"))); // NOI18N
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
+
+        salirBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/salir_opt.png"))); // NOI18N
+        salirBtn.setText("Salir");
+        salirBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                salirBtnActionPerformed(evt);
             }
         });
 
@@ -207,36 +488,42 @@ public class GestionLibros extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(153, 153, 153)
+                        .addComponent(nuevoBtn)
+                        .addGap(18, 18, 18)
+                        .addComponent(guardarBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(modificarBtn)
+                        .addGap(18, 18, 18)
+                        .addComponent(eliminarBtn)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCancelar)
+                        .addGap(18, 18, 18)
+                        .addComponent(salirBtn))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(312, 312, 312)
-                        .addComponent(jLabel10))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(183, 183, 183)
-                        .addComponent(jButton2)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton1)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton3)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnnuevo3)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(387, 387, 387)
+                        .addComponent(jLabel10)))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(40, Short.MAX_VALUE)
                 .addComponent(jLabel10)
-                .addGap(33, 33, 33)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(btnnuevo3))
-                .addGap(19, 19, 19))
+                    .addComponent(modificarBtn)
+                    .addComponent(guardarBtn)
+                    .addComponent(nuevoBtn)
+                    .addComponent(eliminarBtn)
+                    .addComponent(btnCancelar)
+                    .addComponent(salirBtn))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -244,26 +531,52 @@ public class GestionLibros extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 36, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 11, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void idlibroTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_idlibroTextFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_idlibroTextFieldActionPerformed
 
-    private void btnnuevo3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnnuevo3ActionPerformed
+    private void eliminarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarBtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnnuevo3ActionPerformed
+        Eliminar();
+    }//GEN-LAST:event_eliminarBtnActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        // TODO add your handling code here:
+        inicio();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void nuevoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoBtnActionPerformed
+        // TODO add your handling code here:
+        Nuevo();
+    }//GEN-LAST:event_nuevoBtnActionPerformed
+
+    private void guardarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarBtnActionPerformed
+        // TODO add your handling code here:
+        Guardar();
+    }//GEN-LAST:event_guardarBtnActionPerformed
+
+    private void modificarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarBtnActionPerformed
+        // TODO add your handling code here:
+        Modificar();
+    }//GEN-LAST:event_modificarBtnActionPerformed
+
+    private void salirBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salirBtnActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_salirBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -302,12 +615,18 @@ public class GestionLibros extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnnuevo3;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JTextField autorTextField;
+    private javax.swing.JButton btnCancelar;
+    private com.toedter.components.JSpinField cantSpinField;
+    private javax.swing.JTextField codUbiTextField;
+    private javax.swing.JTextField edicionTextField;
+    private javax.swing.JTextField editorialTextField;
+    private javax.swing.JButton eliminarBtn;
+    private javax.swing.JButton guardarBtn;
+    private javax.swing.JTextField idlibroTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -319,15 +638,13 @@ public class GestionLibros extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private com.toedter.components.JSpinField jSpinField1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
-    private com.toedter.calendar.JYearChooser jYearChooser1;
+    private javax.swing.JTable librosTabla;
+    private javax.swing.JTextField lugarPublicacionTextField;
+    private javax.swing.JButton modificarBtn;
+    private javax.swing.JButton nuevoBtn;
+    private javax.swing.JTextField numPagTextField;
+    private com.toedter.calendar.JYearChooser publicacionYearChooser;
+    private javax.swing.JButton salirBtn;
+    private javax.swing.JTextField tituloTextField;
     // End of variables declaration//GEN-END:variables
 }

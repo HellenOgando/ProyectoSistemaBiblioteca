@@ -5,7 +5,7 @@
  */
 package Interfaz_Grafica;
 
-import static BaseDeDatos.BDSentencias.Matricula;
+import static BaseDeDatos.BDSentenciasEST.Matricula;
 
 /**
  *

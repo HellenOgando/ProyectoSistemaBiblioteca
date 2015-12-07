@@ -6,7 +6,7 @@
 package Interfaz_Grafica;
 
 import BaseDeDatos.BDConexion;
-import static BaseDeDatos.BDSentencias.Matricula;
+import static BaseDeDatos.BDSentenciasEST.Matricula;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -163,7 +163,7 @@ public class CambiarContraseña extends javax.swing.JFrame {
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
         // TODO add your handling code here:
         
-         BaseDeDatos.BDSentencias CambiarContraseña;
+         BaseDeDatos.BDSentenciasEST CambiarContraseña;
          int Matris = Integer.parseInt(Matricula);
 
        if (ContraseñaActual.getText().equals("") ||ContraNueva.getText().equals("") || ContraNueva2.getText().equals("")){
@@ -175,7 +175,7 @@ public class CambiarContraseña extends javax.swing.JFrame {
       
            
              try {
-                 CambiarContraseña = new BaseDeDatos.BDSentencias();
+                 CambiarContraseña = new BaseDeDatos.BDSentenciasEST();
                 // CambiarContraseña.CambiarContraseña(Matricula, ContraseñaActual.getText(),ContraNueva.getText(),ContraNueva2.getText());
                  
                  if (CambiarContraseña.CambiarContraseña(Matris, ContraseñaActual.getText(),ContraNueva.getText(),ContraNueva2.getText())==false){

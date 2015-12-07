@@ -30,7 +30,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
     Connection conn = null;
     ResultSet rs = null;
     Statement pst = null;
-    int IDusu=0;// VARIABLE que representa la matricula, para poder guardar o modificar en la base de datos
+    int Matricula=0;// VARIABLE que representa la matricula, para poder guardar o modificar en la base de datos
      String cbTipoDeUsuario;
      String cbSexo;
      String cbCarrera;
@@ -53,15 +53,21 @@ public class GestionUsuarios extends javax.swing.JFrame {
         try {
 
             BDConexion miconexion = new BDConexion();
-            String cons = "SELECT * FROM Usuarios";
+            String cons = "SELECT Matricula, Nombre, Apellido, FechaNacimiento, Genero, Carrera FROM Estudiantes";
+            String cons2 = "SELECT Codigo, Nombre, Apellido, FechaNacimiento, Genero  FROM Administradores";
             ResultSet consultas = miconexion.consulta(cons);
-
+            ResultSet consultasADM = miconexion.consulta(cons2);
             ResultSetMetaData rsMd = consultas.getMetaData();
-            int numeroColumnas = rsMd.getColumnCount();
+            ResultSetMetaData rsMd2 = consultasADM.getMetaData();
+             int numeroColumnas = rsMd.getColumnCount();
+            int numeroColumnasADM = rsMd2.getColumnCount();
 
-            String titulos[] = {"Matrícula", "Nombre", "Apellido","Contraseña", "Tipo de Usuario", "Fecha de Nacimiento", "Sexo", "Carrera"};
+            String titulos[] = {"Matrícula", "Nombre", "Apellido", "Fecha de Nacimiento", "Sexo", "Carrera"};
+            String titulosADM[] = {"Codigo", "Nombre", "Apellido", "Fecha de Nacimiento", "Sexo"};
             DefaultTableModel modelo = new DefaultTableModel(null, titulos);
-            this.Tabla_Usuarios.setModel(modelo);
+            this.Tabla_Estudiantes.setModel(modelo);
+            DefaultTableModel modeloADM = new DefaultTableModel(null, titulosADM);
+            this.Tabla_Administradores.setModel(modeloADM);
 
             while (consultas.next()) {
                 Object[] fila = new Object[numeroColumnas];
@@ -69,6 +75,13 @@ public class GestionUsuarios extends javax.swing.JFrame {
                     fila[y] = consultas.getObject(y + 1);
                 }
                 modelo.addRow(fila);
+            }
+            while (consultasADM.next()) {
+                Object[] fila = new Object[numeroColumnasADM];
+                for (int y = 0; y < numeroColumnasADM; y++) {
+                    fila[y] = consultasADM.getObject(y + 1);
+                }
+                modeloADM.addRow(fila);
             }
 
         } catch (Exception e) {
@@ -91,9 +104,9 @@ public class GestionUsuarios extends javax.swing.JFrame {
             ResultSetMetaData rsMd = consultas.getMetaData();
             int numeroColumnas = rsMd.getColumnCount();
 
-            String titulos[] = {"Matrícula", "Nombre", "Apellido","Contraseña", "Tipo de Usuario", "Fecha de Nacimiento", "Sexo", "Carrera"};
+            String titulos[] = {"Matrícula", "Nombre", "Apellido", "Fecha de Nacimiento", "Sexo", "Carrera"};
             DefaultTableModel modelo = new DefaultTableModel(null, titulos);
-            this.Tabla_Usuarios.setModel(modelo);
+            this.Tabla_Estudiantes.setModel(modelo);
 
             while (consultas.next()) {
                 Object[] fila = new Object[numeroColumnas];
@@ -153,7 +166,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
         btnEliminar.setEnabled(false);
         btnCancelar.setEnabled(false);
         btnGuardar.setText("Guardar");
-        Tabla_Usuarios.setEnabled(true);
+        Tabla_Estudiantes.setEnabled(true);
         txt_Matricula.setText(null);
         txt_Nombre.setText(null);
         txt_Apellido.setText(null);
@@ -164,7 +177,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
         ComboBox_Sexo.setSelectedIndex(0);
         ComboBox_Carrera.setSelectedIndex(0);
         ComboBox_busqueda.setSelectedIndex(0);
-        IDusu=0;
+        Matricula=0;
         btnBusqueda.setEnabled(false);
         ComboBox_busqueda.setEnabled(true);
          // prueba();    
@@ -176,7 +189,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
         
         try {
             BDConexion miconexion = new BDConexion();
-            String cons = "SELECT * FROM Carrera";
+            String cons = "SELECT * FROM Carreras";
             ResultSet consultas = miconexion.consulta(cons);
             //  JOptionPane.showMessageDialog(this, totalRow);
                int h=0;       
@@ -204,8 +217,6 @@ public class GestionUsuarios extends javax.swing.JFrame {
         */ 
          JOptionPane.showMessageDialog(this, Arrays.toString(result) + h);
       
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -218,7 +229,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
         try {
             
             BDConexion miconexion = new BDConexion();
-            String cons = "SELECT * FROM Carrera";
+            String cons = "SELECT * FROM Carreras";
             ResultSet consultas = miconexion.consulta(cons);
             
             while(consultas.next()){
@@ -226,42 +237,36 @@ public class GestionUsuarios extends javax.swing.JFrame {
                 ComboBox_Carrera.addItem(consultas.getString("Descripcion"));
             }
             
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     private void TocarJtabla(){
         
-        if (this.Tabla_Usuarios.isEnabled()){
+        if (this.Tabla_Estudiantes.isEnabled()){
           String FechaNac;
          try {
             
-          //  int row = Tabla_Usuarios.getSelectedRow();//este se usa para seleccionar una fila de la tabla normalmente
-             int row = Tabla_Usuarios.convertRowIndexToModel(Tabla_Usuarios.getSelectedRow());// este se usa para seleccionar una fila de la tabla aun cuando se organiza de mayor a menor, etc
+          //  int row = Tabla_Estudiantes.getSelectedRow();//este se usa para seleccionar una fila de la tabla normalmente
+             int row = Tabla_Estudiantes.convertRowIndexToModel(Tabla_Estudiantes.getSelectedRow());// este se usa para seleccionar una fila de la tabla aun cuando se organiza de mayor a menor, etc
              DateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
 
-            IDusu= (int) (Tabla_Usuarios.getModel().getValueAt(row, 0));
-            txt_Matricula.setText(Tabla_Usuarios.getModel().getValueAt(row, 0).toString());
-            txt_Nombre.setText(Tabla_Usuarios.getModel().getValueAt(row, 1).toString());
-            txt_Apellido.setText(Tabla_Usuarios.getModel().getValueAt(row, 2).toString());
-            txtContraseña.setText(Tabla_Usuarios.getModel().getValueAt(row, 3).toString());
-            cbTipoDeUsuario = (Tabla_Usuarios.getModel().getValueAt(row, 4).toString());
-            FechaNac = (Tabla_Usuarios.getModel().getValueAt(row, 5).toString());
+            Matricula= (int) (Tabla_Estudiantes.getModel().getValueAt(row, 0));
+            txt_Matricula.setText(Tabla_Estudiantes.getModel().getValueAt(row, 0).toString());
+            txt_Nombre.setText(Tabla_Estudiantes.getModel().getValueAt(row, 1).toString());
+            txt_Apellido.setText(Tabla_Estudiantes.getModel().getValueAt(row, 2).toString());
+           // txtContraseña.setText(Tabla_Estudiantes.getModel().getValueAt(row, 3).toString());
+           // cbTipoDeUsuario = (Tabla_Estudiantes.getModel().getValueAt(row, 4).toString());
+            FechaNac = (Tabla_Estudiantes.getModel().getValueAt(row, 3).toString());
             java.util.Date date = formatter.parse(FechaNac);
             dc_fechanac.setDate(date);
-            cbSexo = (Tabla_Usuarios.getModel().getValueAt(row, 6).toString());
-            cbCarrera = (Tabla_Usuarios.getModel().getValueAt(row, 7).toString());
+            cbSexo = (Tabla_Estudiantes.getModel().getValueAt(row, 4).toString());
+            cbCarrera = (Tabla_Estudiantes.getModel().getValueAt(row, 5).toString());
             
 
-            
-            if (cbTipoDeUsuario.equals("Administrador")) {
-                ComboBox_TipoU.setSelectedIndex(1);
-            }
-            if (cbTipoDeUsuario.equals("Estudiante")) {
+           
                 ComboBox_TipoU.setSelectedIndex(2);
-            }
+            
              if (cbSexo.equals("Masculino")) {
                 ComboBox_Sexo.setSelectedIndex(1);
             }
@@ -270,7 +275,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
             }
                
                     BDConexion miconexion = new BDConexion();
-            String cons = "SELECT * FROM Carrera";
+            String cons = "SELECT * FROM Carreras";
             ResultSet consultas = miconexion.consulta(cons);
             //  JOptionPane.showMessageDialog(this, totalRow);
                int h=0;       
@@ -290,35 +295,53 @@ public class GestionUsuarios extends javax.swing.JFrame {
                 
         
     }}
-        /*
-         if (cbCarrera.equals("Administración")) {
-                ComboBox_Carrera.setSelectedIndex(1);
+        
+        
+             this.btnModificar.setEnabled(true);
+             this.btnEliminar.setEnabled(true);
+             this.btnNuevo.setEnabled(false);
+              this.btnCancelar.setEnabled(true);
+              ComboBox_busqueda.setEnabled(false);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    }
+    private void TocarJtablaADM(){
+        
+        if (this.Tabla_Administradores.isEnabled()){
+          String FechaNac;
+         try {
+            
+         
+             int row = Tabla_Administradores.convertRowIndexToModel(Tabla_Administradores.getSelectedRow());// este se usa para seleccionar una fila de la tabla aun cuando se organiza de mayor a menor, etc
+             DateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+
+            Matricula= (int) (Tabla_Administradores.getModel().getValueAt(row, 0));
+            txt_Matricula.setText(Tabla_Administradores.getModel().getValueAt(row, 0).toString());
+            txt_Nombre.setText(Tabla_Administradores.getModel().getValueAt(row, 1).toString());
+            txt_Apellido.setText(Tabla_Administradores.getModel().getValueAt(row, 2).toString());
+            
+            FechaNac = (Tabla_Administradores.getModel().getValueAt(row, 3).toString());
+            java.util.Date date = formatter.parse(FechaNac);
+            dc_fechanac.setDate(date);
+            cbSexo = (Tabla_Administradores.getModel().getValueAt(row, 4).toString());
+            
+            
+
+            
+           
+                ComboBox_TipoU.setSelectedIndex(1);
+            
+            
+             if (cbSexo.equals("Masculino")) {
+                ComboBox_Sexo.setSelectedIndex(1);
             }
-         if (cbCarrera.equals("Mercadeo")) {
-                ComboBox_Carrera.setSelectedIndex(2);
+               if (cbSexo.equals("Femenino")) {
+                ComboBox_Sexo.setSelectedIndex(2);
             }
-         if (cbCarrera.equals("Publicidad")) {
-                ComboBox_Carrera.setSelectedIndex(3);
-            }
-         if (cbCarrera.equals("Abogado")) {
-                ComboBox_Carrera.setSelectedIndex(4);
-            }
-         if (cbCarrera.equals("Psicología")) {
-                ComboBox_Carrera.setSelectedIndex(5);
-            }
-         if (cbCarrera.equals("TIC")) {
-                ComboBox_Carrera.setSelectedIndex(6);
-            }
-         if (cbCarrera.equals("Ingeniería Civil")) {
-                ComboBox_Carrera.setSelectedIndex(7);
-            }
-         if (cbCarrera.equals("Ingeniería Industrial")) {
-                ComboBox_Carrera.setSelectedIndex(8);
-            }
-         if (cbCarrera.equals("")) {
-                ComboBox_Carrera.setSelectedIndex(9);
-            }
-            */
+               
+         
         
              this.btnModificar.setEnabled(true);
              this.btnEliminar.setEnabled(true);
@@ -332,33 +355,38 @@ public class GestionUsuarios extends javax.swing.JFrame {
     }
     
     private void Guardar(){// boton Guardar
-        
-        objetos.Usuarios UsuariofulanoActualizado = null;// este se usara cuando se actualizen los datos
+        if(ComboBox_TipoU.getSelectedItem().equals("Estudiante")){
+        objetos.Estudiante estAct = null;// este se usara cuando se actualizen los datos
         
          String TipoDeUsuario = (String) ComboBox_TipoU.getSelectedItem();
          String Sexo = (String) ComboBox_Sexo.getSelectedItem();
          String Carrera = (String) ComboBox_Carrera.getSelectedItem();
         java.util.Date FechaParaComprobar = dc_fechanac.getDate();
          //dc_fechanac == null
-    
-         if (txt_Matricula.getText().equals("") || txt_Nombre.getText().equals("") || txt_Apellido.getText().equals("") || txtContraseña.getText().equals("") ||  TipoDeUsuario.equals("Seleccione")|| FechaParaComprobar==null || dc_fechanac == null|| Sexo.equals("Seleccione") || Carrera.equals("Seleccione")) {
+          if(btnGuardar.getText().equals("Actualizar")){
+           if (txt_Matricula.getText().equals("") || txt_Nombre.getText().equals("") || txt_Apellido.getText().equals("") ||  TipoDeUsuario.equals("Seleccione")|| FechaParaComprobar==null || dc_fechanac == null|| Sexo.equals("Seleccione") || Carrera.equals("Seleccione")) {
                 JOptionPane.showMessageDialog(null, "Llene las casillas en blanco");
                 return;
             }
+          }else{
+         if (txt_Matricula.getText().equals("") || txt_Nombre.getText().equals("") || txt_Apellido.getText().equals("") || txtContraseña.getText().equals("") ||  TipoDeUsuario.equals("Seleccione")|| FechaParaComprobar==null || dc_fechanac == null|| Sexo.equals("Seleccione") || Carrera.equals("Seleccione")) {
+                JOptionPane.showMessageDialog(null, "Llene las casillas en blanco");
+                return;
+            }}
          
 //metodo para comprobar si la matricula que se agregara esta ya almacenada en la tabla
          
-          int totalRow = Tabla_Usuarios.getRowCount();//total de filas en la tabla
+          int totalRow = Tabla_Estudiantes.getRowCount();//total de filas en la tabla
            
         //totalRow -= 1;
        //  JOptionPane.showMessageDialog(this,totalRow );
-        int[]Matriculas=new int[totalRow];// array donde se ira almacenando todas las matriculas que estan en la tabla
+       /* int[]Matriculas=new int[totalRow];// array donde se ira almacenando todas las matriculas que estan en la tabla
           int MatriculaTabla;
         for (int i = 0; i < (totalRow); i++) {// aqui se ira almacenando las matriculas de la tabla en el array
-            MatriculaTabla= Integer.parseInt(String.valueOf(Tabla_Usuarios.getValueAt(i, 0)));
+            MatriculaTabla= Integer.parseInt(String.valueOf(Tabla_Estudiantes.getValueAt(i, 0)));
             Matriculas[i]=MatriculaTabla;
-        }
-         int Matricula = Integer.parseInt(txt_Matricula.getText());
+        }*/
+         /*int Matricula = Integer.parseInt(txt_Matricula.getText());
          String nombreBoton = btnGuardar.getText();
         
         for(int i=0;i<Matriculas.length;i++){
@@ -368,28 +396,28 @@ public class GestionUsuarios extends javax.swing.JFrame {
                 return ;
                 
         
-    }}
+    }}*/
          
         
         DateFormat fecha = new SimpleDateFormat("yyyy/MM/dd");// para convertir al formato de la fecha que acepta sqlite
         String FechaNac = fecha.format(dc_fechanac.getDate());
-        objetos.Usuarios Usuariofulano = new objetos.Usuarios(Matricula, txt_Nombre.getText(), txt_Apellido.getText(), txtContraseña.getText(), TipoDeUsuario, FechaNac, Sexo, Carrera);
-        BaseDeDatos.BDSentencias insert;
-        BaseDeDatos.BDSentencias update;
+        objetos.Estudiante est = new objetos.Estudiante(Integer.parseInt(txt_Matricula.getText()), txt_Nombre.getText(), txt_Apellido.getText(), txtContraseña.getText(), FechaNac, Sexo, Carrera, TipoDeUsuario);
+        BaseDeDatos.BDSentenciasEST insert;
+        BaseDeDatos.BDSentenciasEST update;
          
-         if (IDusu!=0)// esta variable es utilizada para saber si se va a guardar o actualizar los datos
+         if (this.Matricula!=0)// esta variable es utilizada para saber si se va a guardar o actualizar los datos
         {
-        UsuariofulanoActualizado = new objetos.Usuarios(IDusu , txt_Nombre.getText(), txt_Apellido.getText(),txtContraseña.getText(),TipoDeUsuario, FechaNac,Sexo,Carrera);
+        estAct = new objetos.Estudiante(this.Matricula , txt_Nombre.getText(), txt_Apellido.getText(),txtContraseña.getText(), FechaNac,Sexo,Carrera,TipoDeUsuario);
         }
          
        try {
              
             
-            if(IDusu!=0){
-            update = new BaseDeDatos.BDSentencias();
-                update.update(Usuariofulano);
+            if(this.Matricula!=0){
+            update = new BaseDeDatos.BDSentenciasEST();
+                update.update(estAct);
                 JOptionPane.showMessageDialog(null, "Actualizado Correctamente");
-                IDusu=0;
+                this.Matricula=0;
                 txt_Matricula.setText(null);
                 txt_Nombre.setText(null);
                 txt_Apellido.setText(null);
@@ -402,8 +430,8 @@ public class GestionUsuarios extends javax.swing.JFrame {
                 inicio();
             }
             else {
-                insert = new BaseDeDatos.BDSentencias();
-                insert.insert(Usuariofulano);
+                insert = new BaseDeDatos.BDSentenciasEST();
+                insert.insert(est);
                 JOptionPane.showMessageDialog(null, "Guardado Correctamente");
                 txt_Matricula.setText(null);
                 txt_Nombre.setText(null);
@@ -422,6 +450,103 @@ public class GestionUsuarios extends javax.swing.JFrame {
             Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+        if(ComboBox_TipoU.getSelectedItem().equals("Administrador")){
+        objetos.Administrador admAct = null;// este se usara cuando se actualizen los datos
+        
+         String TipoDeUsuario = (String) ComboBox_TipoU.getSelectedItem();
+         String Sexo = (String) ComboBox_Sexo.getSelectedItem();
+         
+        java.util.Date FechaParaComprobar = dc_fechanac.getDate();
+         //dc_fechanac == null
+    
+         if(btnGuardar.getText().equals("Actualizar")){
+           if (txt_Matricula.getText().equals("") || txt_Nombre.getText().equals("") || txt_Apellido.getText().equals("") ||  FechaParaComprobar==null || dc_fechanac == null|| Sexo.equals("Seleccione")) {
+                JOptionPane.showMessageDialog(null, "Llene las casillas en blanco");
+                return;
+            }
+          }else{
+         if (txt_Matricula.getText().equals("") || txt_Nombre.getText().equals("") || txt_Apellido.getText().equals("") || txtContraseña.getText().equals("") ||  TipoDeUsuario.equals("Seleccione")|| FechaParaComprobar==null || dc_fechanac == null|| Sexo.equals("Seleccione") ) {
+                JOptionPane.showMessageDialog(null, "Llene las casillas en blanco");
+                return;
+            }}
+         
+//metodo para comprobar si la matricula que se agregara esta ya almacenada en la tabla
+         
+          int totalRow = Tabla_Administradores.getRowCount();//total de filas en la tabla
+           
+        //totalRow -= 1;
+       //  JOptionPane.showMessageDialog(this,totalRow );
+       /* int[]Matriculas=new int[totalRow];// array donde se ira almacenando todas las matriculas que estan en la tabla
+          int MatriculaTabla;
+        for (int i = 0; i < (totalRow); i++) {// aqui se ira almacenando las matriculas de la tabla en el array
+            MatriculaTabla= Integer.parseInt(String.valueOf(Tabla_Estudiantes.getValueAt(i, 0)));
+            Matriculas[i]=MatriculaTabla;
+        }*/
+         /*int Matricula = Integer.parseInt(txt_Matricula.getText());
+         String nombreBoton = btnGuardar.getText();
+        
+        for(int i=0;i<Matriculas.length;i++){
+    if(Matricula==Matriculas[i] && nombreBoton.equals("Guardar") ){ //aqui se compara la matricula introducida con las de la tabla para ver si hay alguna igual
+       
+        JOptionPane.showMessageDialog(null, "No se Pueden repetir Matriculas/ID");
+                return ;
+                
+        
+    }}*/
+         
+        
+        DateFormat fecha = new SimpleDateFormat("yyyy/MM/dd");// para convertir al formato de la fecha que acepta sqlite
+        String FechaNac = fecha.format(dc_fechanac.getDate());
+        objetos.Administrador adm = new objetos.Administrador(Integer.parseInt(txt_Matricula.getText()), txt_Nombre.getText(), txt_Apellido.getText(), txtContraseña.getText(), FechaNac, Sexo, TipoDeUsuario);
+        BaseDeDatos.BDSentenciasADM insert;
+        BaseDeDatos.BDSentenciasADM update;
+         
+         if (this.Matricula!=0)// esta variable es utilizada para saber si se va a guardar o actualizar los datos
+        {
+        admAct = new objetos.Administrador(this.Matricula , txt_Nombre.getText(), txt_Apellido.getText(),txtContraseña.getText(), FechaNac,Sexo,TipoDeUsuario);
+        }
+         
+       try {
+             
+            
+            if(this.Matricula!=0){
+            update = new BaseDeDatos.BDSentenciasADM();
+                update.update(admAct);
+                JOptionPane.showMessageDialog(null, "Actualizado Correctamente");
+                this.Matricula=0;
+                txt_Matricula.setText(null);
+                txt_Nombre.setText(null);
+                txt_Apellido.setText(null);
+                txtContraseña.setText(null);
+                ComboBox_TipoU.setSelectedIndex(0);
+                dc_fechanac.setDate(null);
+                ComboBox_Sexo.setSelectedIndex(0);
+                ComboBox_Carrera.setSelectedIndex(0);
+                RefrescarTabla();
+                inicio();
+            }
+            else {
+                insert = new BaseDeDatos.BDSentenciasADM();
+                insert.insert(adm);
+                JOptionPane.showMessageDialog(null, "Guardado Correctamente");
+                txt_Matricula.setText(null);
+                txt_Nombre.setText(null);
+                txt_Apellido.setText(null);
+                txtContraseña.setText(null);
+                ComboBox_TipoU.setSelectedIndex(0);
+                dc_fechanac.setDate(null);
+                ComboBox_Sexo.setSelectedIndex(0);
+                ComboBox_Carrera.setSelectedIndex(0);
+                RefrescarTabla();
+                inicio();
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    }
     
     private void Nuevo(){ // boton Nuevo
         
@@ -436,7 +561,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
         btnNuevo.setEnabled(false);
         btnGuardar.setEnabled(true);
         this.btnCancelar.setEnabled(true);
-        Tabla_Usuarios.setEnabled(false);
+        Tabla_Estudiantes.setEnabled(false);
         ComboBox_busqueda.setEnabled(false);
     }
     
@@ -445,8 +570,8 @@ public class GestionUsuarios extends javax.swing.JFrame {
          txt_Matricula.setEnabled(false);
         txt_Nombre.setEnabled(true);
         txt_Apellido.setEnabled(true);
-        txtContraseña.setEnabled(true);
-        ComboBox_TipoU.setEnabled(true);
+        txtContraseña.setEnabled(false);
+        ComboBox_TipoU.setEnabled(false);
         dc_fechanac.setEnabled(true);
         ComboBox_Sexo.setEnabled(true);
         ComboBox_Carrera.setEnabled(true);
@@ -456,14 +581,17 @@ public class GestionUsuarios extends javax.swing.JFrame {
         btnModificar.setEnabled(false);
         this.btnCancelar.setEnabled(true);
         btnGuardar.setText("Actualizar");
-        Tabla_Usuarios.setEnabled(false);
+        Tabla_Estudiantes.setEnabled(false);
         ComboBox_busqueda.setEnabled(false);
+        if(ComboBox_TipoU.getSelectedItem().equals("Administrador")){
+        ComboBox_Carrera.setEnabled(false);
+        }
     }
     
     private void Eliminar(){// boton Eliminar
-        
+        if(ComboBox_TipoU.getSelectedItem().equals("Estudiante")){
         try {
-            if (IDusu==0) {
+            if (Matricula==0) {
                 JOptionPane.showMessageDialog(null, "Seleccione un Usuario de la Tabla para eliminarlo");
             } else {
                 String TipoDeUsuario = (String) ComboBox_TipoU.getSelectedItem();
@@ -472,12 +600,12 @@ public class GestionUsuarios extends javax.swing.JFrame {
          DateFormat fecha = new SimpleDateFormat("yyyy/MM/dd");// para convertir al formato de la fecha que acepta sqlite
 		String FechaNac = fecha.format(dc_fechanac.getDate());
                 int Matricula = Integer.parseInt(txt_Matricula.getText());
-                objetos.Usuarios Usuariofulano  =  new objetos.Usuarios(Matricula, txt_Nombre.getText(), txt_Apellido.getText(), txtContraseña.getText(),TipoDeUsuario, FechaNac,Sexo,Carrera);
-                BaseDeDatos.BDSentencias delete;
-                delete = new BaseDeDatos.BDSentencias();
-                delete.delete(Usuariofulano);
+                objetos.Estudiante est =  new objetos.Estudiante(Matricula, txt_Nombre.getText(), txt_Apellido.getText(), txtContraseña.getText(), FechaNac,Sexo,Carrera,TipoDeUsuario);
+                BaseDeDatos.BDSentenciasEST delete;
+                delete = new BaseDeDatos.BDSentenciasEST();
+                delete.delete(est);
                 JOptionPane.showMessageDialog(null, "Eliminado Correctamente");
-                IDusu=0;
+                this.Matricula=0;
                 txt_Matricula.setText(null);
                 txt_Nombre.setText(null);
                 txt_Apellido.setText(null);
@@ -495,6 +623,42 @@ public class GestionUsuarios extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+         if(ComboBox_TipoU.getSelectedItem().equals("Administrador")){
+        try {
+            if (Matricula==0) {
+                JOptionPane.showMessageDialog(null, "Seleccione un Usuario de la Tabla para eliminarlo");
+            } else {
+                String TipoDeUsuario = (String) ComboBox_TipoU.getSelectedItem();
+         String Sexo = (String) ComboBox_Sexo.getSelectedItem();
+         String Carrera = (String) ComboBox_Carrera.getSelectedItem();
+         DateFormat fecha = new SimpleDateFormat("yyyy/MM/dd");// para convertir al formato de la fecha que acepta sqlite
+		String FechaNac = fecha.format(dc_fechanac.getDate());
+                int Matricula = Integer.parseInt(txt_Matricula.getText());
+                objetos.Estudiante est =  new objetos.Estudiante(Matricula, txt_Nombre.getText(), txt_Apellido.getText(), txtContraseña.getText(), FechaNac,Sexo,Carrera,TipoDeUsuario);
+                BaseDeDatos.BDSentenciasADM delete;
+                delete = new BaseDeDatos.BDSentenciasADM();
+                delete.delete(est);
+                JOptionPane.showMessageDialog(null, "Eliminado Correctamente");
+                this.Matricula=0;
+                txt_Matricula.setText(null);
+                txt_Nombre.setText(null);
+                txt_Apellido.setText(null);
+                txtContraseña.setText(null);
+                ComboBox_TipoU.setSelectedIndex(0);
+                dc_fechanac.setDate(null);
+                ComboBox_Sexo.setSelectedIndex(0);
+                ComboBox_Carrera.setSelectedIndex(0);
+                RefrescarTabla();
+                inicio();
+                
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(GestionUsuarios.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     }
     
     private void busqueda (){
@@ -518,7 +682,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
                 int busquedaMatricula = Integer.parseInt(busquedaNombre); 
                 RefrescarTablaBusquedaMatricula(busquedaMatricula);
                 */
-                String sql = "SELECT * FROM Usuarios WHERE Matricula LIKE '%"+busquedaNombre+"%'";
+                String sql = "SELECT Matricula, Nombre, Apellido, FechaNacimiento, Genero, Carrera FROM Estudiantes WHERE Matricula LIKE '%"+busquedaNombre+"%'";
             RefrescarTablaBusqueda(sql);
                 inicio();
                 btnCancelar.setEnabled(true);
@@ -534,21 +698,21 @@ public class GestionUsuarios extends javax.swing.JFrame {
         }
          if (SeleccionBusqueda.equals("Nombre")){
             
-            String sql = "SELECT * FROM Usuarios WHERE Nombre LIKE '%"+busquedaNombre+"%'";
+            String sql = "SELECT Matricula, Nombre, Apellido, FechaNacimiento, Genero, Carrera FROM Estudiantes WHERE Nombre LIKE '%"+busquedaNombre+"%'";
             RefrescarTablaBusqueda(sql);
             inicio();
             btnNuevo.setEnabled(false);
             btnCancelar.setEnabled(true);
         }
          if (SeleccionBusqueda.equals("Apellido")){
-            String sql = "SELECT * FROM Usuarios WHERE Apellido LIKE '%"+busquedaNombre+"%'";
+            String sql = "SELECT Matricula, Nombre, Apellido, FechaNacimiento, Genero, Carrera FROM Estudiantes WHERE Apellido LIKE '%"+busquedaNombre+"%'";
             RefrescarTablaBusqueda(sql);
             inicio();
             btnNuevo.setEnabled(false);
             btnCancelar.setEnabled(true);
         }
            if (SeleccionBusqueda.equals("Carrera")){
-            String sql = "SELECT * FROM Usuarios WHERE Carrera LIKE '%"+busquedaNombre+"%'";
+            String sql = "SELECT Matricula, Nombre, Apellido, FechaNacimiento, Genero, Carrera FROM Estudiantes WHERE Carrera LIKE '%"+busquedaNombre+"%'";
             RefrescarTablaBusqueda(sql);
             inicio();
             btnNuevo.setEnabled(false);
@@ -612,8 +776,8 @@ public class GestionUsuarios extends javax.swing.JFrame {
                  c++;
              }
              
-             Tabla_Usuarios.setModel(md);
-             this.Tabla_Usuarios.setModel(md);
+             Tabla_Estudiantes.setModel(md);
+             this.Tabla_Estudiantes.setModel(md);
              
         } catch (Exception e) {
            // System.out.println(e.getMessage());
@@ -640,7 +804,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        Tabla_Usuarios = new javax.swing.JTable();
+        Tabla_Estudiantes = new javax.swing.JTable();
         txt_Matricula = new javax.swing.JTextField();
         txt_Nombre = new javax.swing.JTextField();
         txt_Apellido = new javax.swing.JTextField();
@@ -653,6 +817,10 @@ public class GestionUsuarios extends javax.swing.JFrame {
         txt_busqueda = new javax.swing.JTextField();
         btnBusqueda = new javax.swing.JButton();
         ComboBox_busqueda = new javax.swing.JComboBox();
+        jLabel11 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        Tabla_Administradores = new javax.swing.JTable();
+        jLabel12 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         btnNuevo = new javax.swing.JButton();
         btnGuardar = new javax.swing.JButton();
@@ -680,29 +848,32 @@ public class GestionUsuarios extends javax.swing.JFrame {
 
         jLabel7.setText("Fecha de Nacimiento:");
 
-        Tabla_Usuarios.setAutoCreateRowSorter(true);
-        Tabla_Usuarios.setModel(new javax.swing.table.DefaultTableModel(
+        Tabla_Estudiantes.setAutoCreateRowSorter(true);
+        Tabla_Estudiantes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Matrícula", "Nombre", "Apellido", "Contraseña", "Nombre de Usario", "Tipo de Usuario", "Fecha de Nacimiento", "Sexo", "Carrera"
+                "Matrícula", "Nombre", "Apellido", "Fecha de Nacimiento", "Sexo", "Carrera"
             }
         ));
-        Tabla_Usuarios.addMouseListener(new java.awt.event.MouseAdapter() {
+        Tabla_Estudiantes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                Tabla_UsuariosMouseClicked(evt);
+                Tabla_EstudiantesMouseClicked(evt);
             }
         });
-        Tabla_Usuarios.addKeyListener(new java.awt.event.KeyAdapter() {
+        Tabla_Estudiantes.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                Tabla_UsuariosKeyTyped(evt);
+                Tabla_EstudiantesKeyTyped(evt);
             }
         });
-        jScrollPane1.setViewportView(Tabla_Usuarios);
+        jScrollPane1.setViewportView(Tabla_Estudiantes);
+        if (Tabla_Estudiantes.getColumnModel().getColumnCount() > 0) {
+            Tabla_Estudiantes.getColumnModel().getColumn(5).setHeaderValue("Carrera");
+        }
 
         txt_Matricula.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -733,6 +904,11 @@ public class GestionUsuarios extends javax.swing.JFrame {
         });
 
         ComboBox_TipoU.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Seleccione", "Administrador", "Estudiante" }));
+        ComboBox_TipoU.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ComboBox_TipoUActionPerformed(evt);
+            }
+        });
 
         ComboBox_Sexo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Seleccione", "Masculino", "Femenino" }));
 
@@ -756,6 +932,34 @@ public class GestionUsuarios extends javax.swing.JFrame {
             }
         });
 
+        jLabel11.setText("Estudiantes");
+
+        Tabla_Administradores.setAutoCreateRowSorter(true);
+        Tabla_Administradores.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Código", "Nombre", "Apellido", "Fecha de Nacimiento", "Sexo"
+            }
+        ));
+        Tabla_Administradores.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                Tabla_AdministradoresMouseClicked(evt);
+            }
+        });
+        Tabla_Administradores.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                Tabla_AdministradoresKeyTyped(evt);
+            }
+        });
+        jScrollPane2.setViewportView(Tabla_Administradores);
+
+        jLabel12.setText("Administradores");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -763,47 +967,83 @@ public class GestionUsuarios extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
-                        .addGap(57, 57, 57)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(ComboBox_Sexo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txt_Nombre)
-                            .addComponent(txt_Matricula)
-                            .addComponent(txt_Apellido)
-                            .addComponent(ComboBox_TipoU, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(dc_fechanac, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ComboBox_Carrera, 0, 127, Short.MAX_VALUE)
-                            .addComponent(txtContraseña)))
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel8)
                             .addComponent(jLabel2)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE))
-                            .addComponent(jLabel6)
                             .addComponent(jLabel7)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel9))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                            .addComponent(jLabel6))
+                        .addGap(0, 5, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(dc_fechanac, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(ComboBox_Sexo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txt_Nombre)
+                        .addComponent(txt_Matricula)
+                        .addComponent(txt_Apellido)
+                        .addComponent(ComboBox_TipoU, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(ComboBox_Carrera, 0, 127, Short.MAX_VALUE)
+                        .addComponent(txtContraseña)))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 499, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(ComboBox_busqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txt_busqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnBusqueda)
-                        .addGap(124, 124, 124))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(ComboBox_busqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(26, 26, 26)
+                                .addComponent(txt_busqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnBusqueda)
+                                .addGap(128, 128, 128))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 499, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 499, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(228, 228, 228)
+                                .addComponent(jLabel11))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(222, 222, 222)
+                                .addComponent(jLabel12)))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
+                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_busqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ComboBox_busqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBusqueda))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ComboBox_TipoU, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ComboBox_Carrera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2)
                     .addComponent(txt_Matricula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -814,34 +1054,19 @@ public class GestionUsuarios extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txt_Apellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(4, 4, 4)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtContraseña, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ComboBox_TipoU, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(8, 8, 8)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtContraseña, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(dc_fechanac, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ComboBox_Sexo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ComboBox_Carrera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ComboBox_busqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txt_busqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBusqueda))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ComboBox_Sexo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(36, 36, 36))
         );
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
@@ -918,18 +1143,18 @@ public class GestionUsuarios extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnCancelar1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
+                        .addContainerGap()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
+                .addGap(35, 35, 35)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnGuardar)
                     .addComponent(btnNuevo)
@@ -946,7 +1171,7 @@ public class GestionUsuarios extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 53, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1012,11 +1237,11 @@ public class GestionUsuarios extends javax.swing.JFrame {
           } 
     }//GEN-LAST:event_txt_NombreKeyTyped
 
-    private void Tabla_UsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Tabla_UsuariosMouseClicked
+    private void Tabla_EstudiantesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Tabla_EstudiantesMouseClicked
         // TODO add your handling code here:
         
       TocarJtabla();
-    }//GEN-LAST:event_Tabla_UsuariosMouseClicked
+    }//GEN-LAST:event_Tabla_EstudiantesMouseClicked
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
         // TODO add your handling code here:
@@ -1057,9 +1282,26 @@ RefrescarTabla();
      ComboBusqueda();
     }//GEN-LAST:event_ComboBox_busquedaActionPerformed
 
-    private void Tabla_UsuariosKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_Tabla_UsuariosKeyTyped
+    private void Tabla_EstudiantesKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_Tabla_EstudiantesKeyTyped
         // TODO add your handling code here:
-    }//GEN-LAST:event_Tabla_UsuariosKeyTyped
+    }//GEN-LAST:event_Tabla_EstudiantesKeyTyped
+
+    private void Tabla_AdministradoresMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Tabla_AdministradoresMouseClicked
+        // TODO add your handling code here:
+        TocarJtablaADM();
+    }//GEN-LAST:event_Tabla_AdministradoresMouseClicked
+
+    private void Tabla_AdministradoresKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_Tabla_AdministradoresKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_Tabla_AdministradoresKeyTyped
+
+    private void ComboBox_TipoUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComboBox_TipoUActionPerformed
+        // TODO add your handling code here:
+        
+        if(ComboBox_TipoU.getSelectedItem().equals("Administrador")){
+        ComboBox_Carrera.setEnabled(false);
+        }
+    }//GEN-LAST:event_ComboBox_TipoUActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1104,7 +1346,8 @@ RefrescarTabla();
     private javax.swing.JComboBox ComboBox_Sexo;
     private javax.swing.JComboBox ComboBox_TipoU;
     private javax.swing.JComboBox ComboBox_busqueda;
-    private javax.swing.JTable Tabla_Usuarios;
+    private javax.swing.JTable Tabla_Administradores;
+    private javax.swing.JTable Tabla_Estudiantes;
     private javax.swing.JButton btnBusqueda;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCancelar1;
@@ -1114,6 +1357,8 @@ RefrescarTabla();
     private javax.swing.JButton btnNuevo;
     private com.toedter.calendar.JDateChooser dc_fechanac;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1125,6 +1370,7 @@ RefrescarTabla();
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPasswordField txtContraseña;
     private javax.swing.JTextField txt_Apellido;
     private javax.swing.JTextField txt_Matricula;

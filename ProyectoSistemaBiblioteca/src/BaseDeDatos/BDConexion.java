@@ -1,77 +1,97 @@
 package BaseDeDatos;
 
-import java.sql.*;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import java.sql.SQLException;
 import java.sql.Statement;
-import javax.swing.JOptionPane;
 
 public class BDConexion {
-    
-Connection miconexion;
-Statement stSentencias;
+    Connection miconexion;
+    Statement stSentencias;
 ResultSet rsDatos ;
 PreparedStatement psPrepararSentencias ;
 Connection conect = null;
-
-/*
-
     public static void main( String args[] )
   {
     Connection c = null;
+    Statement stmt = null;
     try {
       Class.forName("org.sqlite.JDBC");
       c = DriverManager.getConnection("jdbc:sqlite:SistemaBibliotecaBD.db");
+      
+      stmt = c.createStatement();
+      String sql = "CREATE TABLE Estudiantes " +
+                   "(Matricula INT PRIMARY KEY     NOT NULL," +
+                   " Nombre           TEXT    NOT NULL, " + 
+                   " Apellido         TEXT    NOT NULL, " +
+                   " Contrasena       TEXT    NOT NULL, " +
+                   " TipoUsuario      TEXT    NOT NULL, " + 
+                   " FechaNacimiento  DATE    NOT NULL, " +
+                   " Genero           TEXT    NOT NULL, " +
+                   " Carrera          TEXT    NOT NULL     )"; 
+      stmt.executeUpdate(sql);
+       sql = "CREATE TABLE Administradores " +
+                   "(Codigo INT PRIMARY KEY     NOT NULL," +
+                   " Nombre           TEXT    NOT NULL, " + 
+                   " Apellido         TEXT    NOT NULL, " +
+                   " Contrasena       TEXT    NOT NULL, " + 
+                   " FechaNacimiento  DATE    NOT NULL, " +
+                   " Genero           TEXT    NOT NULL,  "+ 
+                   " TipoUsuario      TEXT    NOT NULL)"; 
+      stmt.executeUpdate(sql);
+      
+       sql = "CREATE TABLE Carreras " +
+                   "(IDCarrera   INT PRIMARY KEY     NOT NULL," +
+                   " Descripcion TEXT NOT NULL )"; 
+      stmt.executeUpdate(sql);
+      
+      sql = "CREATE TABLE Libros " +
+                   "(IDLibro INT PRIMARY KEY     NOT NULL," +
+                   " Titulo           TEXT    NOT NULL, " + 
+                   " Autor            TEXT    NOT NULL, " + 
+                   " LugarPublicacion TEXT    NOT NULL, " +
+                   " FechaPublicacion DATE    NOT NULL, " + 
+                   
+                   " Edicion          TEXT     NOT NULL, " +
+                   " Editorial        TEXT     NOT NULL, " +
+                   " NumeroPaginas    TEXT     NOT NULL, " +
+                   " CantidadLibros   TEXT     NOT NULL, " +
+                   " CodigoUbicacion  TEXT    NOT NULL )"; 
+      stmt.executeUpdate(sql);
+      sql = "CREATE TABLE Historial " +
+                   "(IDTransaccion        INT  PRIMARY KEY     NOT NULL," +
+                   " IDUsuario            INT  NOT NULL, " + 
+                   " IDLibro              INT  NOT NULL, " +
+                   " CodUbicacionLibro    TEXT NOT NULL, " + 
+                   " FechaEntrega         DATE, " + 
+                   " FechaDevolucion      DATE, " +
+                   " Estado               DATE    NOT NULL, " +
+                   " UltimaActualizacion  DATE   NOT NULL, " +
+                   " FOREIGN KEY(IDUsuario) REFERENCES Usuarios(IDUsuario),"+ 
+                   " FOREIGN KEY(IDLibro) REFERENCES Libros(IDLibros)"+ 
+                   " FOREIGN KEY(CodUbicacionLibro) REFERENCES Libros(CodigoUbicacion))"; 
+      
+              stmt.close();
+      
+      
+      
     } catch ( Exception e ) {
       System.err.println( e.getClass().getName() + ": " + e.getMessage() );
       System.exit(0);
     }
     System.out.println("Base de datos abierta exitosamente");
-            
-        }
-    */
-
-
-
-public BDConexion() throws ClassNotFoundException, SQLException {
-    try {
-        //String ruta = ":SistemaBibliotecaBD.db";
-       // String ruta = ":C:\\Users\\albe211\\Documents\\NetBeansProjects\\ProyectoSistemaBiblioteca\\bd\\SistemaBibliotecaBD.sqlite";
-       // String ruta = ":C:\\Users\\albert\\Dropbox\\7mo Semestre\\Analisis y Diseno Sistema\\Sistema Final\\bd\\SistemaBibliotecaBD.sqlite";
-        String ruta = ":C:\\Users\\albe211\\Dropbox\\7mo Semestre\\Analisis y Diseno Sistema\\Sistema Final\\bd\\SistemaBibliotecaBD.sqlite";
-      Class.forName("org.sqlite.JDBC");
-      conect = DriverManager.getConnection("jdbc:sqlite"+ruta);
-    } catch ( Exception e ) {
-      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-      System.exit(0);
-    }
-    System.out.println("Base de datos abierta exitosamente");
-  
-
-    }
-
-
-    public ResultSet consulta(String sql) throws SQLException {
-        try {
-
-            psPrepararSentencias = conect.prepareStatement(sql);
-            rsDatos = psPrepararSentencias.executeQuery();
            
-        } catch(SQLException ex){throw ex;}
-    return rsDatos;
-}
-    
+        }
     public Connection Conexion1() {
         try {
-        //String ruta = ":SistemaBibliotecaBD.db";
-       // String ruta = ":C:\\Users\\albe211\\Documents\\NetBeansProjects\\ProyectoSistemaBiblioteca\\bd\\SistemaBibliotecaBD.sqlite";
-     //   String ruta = ":C:\\Users\\albert\\Dropbox\\7mo Semestre\\Analisis y Diseno Sistema\\Sistema Final\\bd\\SistemaBibliotecaBD.sqlite";
-        String ruta = ":C:\\Users\\albe211\\Dropbox\\7mo Semestre\\Analisis y Diseno Sistema\\Sistema Final\\bd\\SistemaBibliotecaBD.sqlite";
+       
       Class.forName("org.sqlite.JDBC");
-      conect = DriverManager.getConnection("jdbc:sqlite"+ruta);
+      
+      conect = DriverManager.getConnection("jdbc:sqlite:SistemaBibliotecaBD.db");
     } catch ( Exception e ) {
       System.err.println( e.getClass().getName() + ": " + e.getMessage() );
       System.exit(0);
@@ -79,5 +99,15 @@ public BDConexion() throws ClassNotFoundException, SQLException {
         return conect;
     
     
-    }}
+    }
+    public ResultSet consulta(String sql) throws SQLException {
+        try {
+            conect = DriverManager.getConnection("jdbc:sqlite:SistemaBibliotecaBD.db");
+            psPrepararSentencias = conect.prepareStatement(sql);
+            rsDatos = psPrepararSentencias.executeQuery();
+           
+        } catch(SQLException ex){throw ex;}
+    return rsDatos;
+}
+    }
 

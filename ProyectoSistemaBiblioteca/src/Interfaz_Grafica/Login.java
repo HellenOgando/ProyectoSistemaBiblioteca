@@ -10,7 +10,7 @@ package Interfaz_Grafica;
  * @author albe211
  */
 
-import static BaseDeDatos.BDSentencias.Aprobacion;
+import static BaseDeDatos.BDSentenciasEST.Aprobacion;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,6 +35,8 @@ public class Login extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jComboBox1 = new javax.swing.JComboBox();
+        jComboBox2 = new javax.swing.JComboBox();
         panelRectTranslucidoComplete1 = new org.edisoncor.gui.panel.PanelRectTranslucidoComplete();
         Panel2 = new javax.swing.JPanel();
         txtusuario = new org.edisoncor.gui.textField.TextFieldRound();
@@ -60,6 +62,12 @@ public class Login extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         btnlogin2 = new org.edisoncor.gui.button.ButtonRound();
         btncancelar2 = new org.edisoncor.gui.button.ButtonRound();
+        ComboBox_TipoULogIn = new javax.swing.JComboBox();
+        jLabel10 = new javax.swing.JLabel();
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         Panel2.setBackground(new java.awt.Color(102, 102, 102));
         Panel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Login\n", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Calibri", 1, 22), new java.awt.Color(255, 255, 255))); // NOI18N
@@ -216,6 +224,11 @@ public class Login extends javax.swing.JFrame {
         Panel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Login\n", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Calibri", 1, 22), new java.awt.Color(255, 255, 255))); // NOI18N
         Panel4.setForeground(new java.awt.Color(255, 255, 255));
 
+        txtMatriculaID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtMatriculaIDActionPerformed(evt);
+            }
+        });
         txtMatriculaID.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtMatriculaIDKeyTyped(evt);
@@ -242,6 +255,16 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
+        ComboBox_TipoULogIn.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Seleccione", "Estudiante", "Administrador" }));
+        ComboBox_TipoULogIn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ComboBox_TipoULogInActionPerformed(evt);
+            }
+        });
+
+        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
+        jLabel10.setText("Tipo de usuario:");
+
         javax.swing.GroupLayout Panel4Layout = new javax.swing.GroupLayout(Panel4);
         Panel4.setLayout(Panel4Layout);
         Panel4Layout.setHorizontalGroup(
@@ -251,12 +274,20 @@ public class Login extends javax.swing.JFrame {
                     .addGroup(Panel4Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(Panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel9))
-                        .addGap(27, 27, 27)
-                        .addGroup(Panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtMatriculaID, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtpasswordLog, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(Panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(Panel4Layout.createSequentialGroup()
+                                    .addComponent(jLabel9)
+                                    .addGap(36, 36, 36))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel4Layout.createSequentialGroup()
+                                    .addComponent(jLabel10)
+                                    .addGap(18, 18, 18)))
+                            .addGroup(Panel4Layout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                        .addGroup(Panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtMatriculaID, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                            .addComponent(txtpasswordLog, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                            .addComponent(ComboBox_TipoULogIn, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(Panel4Layout.createSequentialGroup()
                         .addGap(81, 81, 81)
                         .addComponent(btnlogin2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -267,11 +298,15 @@ public class Login extends javax.swing.JFrame {
         Panel4Layout.setVerticalGroup(
             Panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(Panel4Layout.createSequentialGroup()
-                .addGap(48, 48, 48)
-                .addGroup(Panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtMatriculaID, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(26, 26, 26)
+                .addGap(11, 11, 11)
+                .addGroup(Panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ComboBox_TipoULogIn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(19, 19, 19)
+                .addGroup(Panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtMatriculaID, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
+                .addGap(18, 18, 18)
                 .addGroup(Panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(txtpasswordLog, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9))
@@ -334,20 +369,28 @@ public class Login extends javax.swing.JFrame {
  String Matricula = txtMatriculaID.getText();
         String pass = txtpasswordLog.getText();
         
-        BaseDeDatos.BDSentencias accesoLogin;
-        
-        if (Matricula.equals("") || pass.equals("")){
+        BaseDeDatos.BDSentenciasEST accesoLoginEST;
+         BaseDeDatos.BDSentenciasADM accesoLoginADM;
+        if (Matricula.equals("") || pass.equals("")||ComboBox_TipoULogIn.getSelectedItem().equals("Seleccione")){
             
              JOptionPane.showMessageDialog(null, "Llene las casillas en blanco");
                 return;
         }
         
           try {
-            accesoLogin = new BaseDeDatos.BDSentencias();
-            accesoLogin.acceder(Matricula, pass);
+              if(ComboBox_TipoULogIn.getSelectedItem().equals("Estudiante")){
+            accesoLoginEST = new BaseDeDatos.BDSentenciasEST();
+            accesoLoginEST.acceder(Matricula, pass);
             txtMatriculaID.setText("");
             txtpasswordLog.setText("");
-            
+              }
+               if(ComboBox_TipoULogIn.getSelectedItem().equals("Administrador")){
+            accesoLoginADM = new BaseDeDatos.BDSentenciasADM();
+            accesoLoginADM.acceder(Matricula, pass);
+            txtMatriculaID.setText("");
+            txtpasswordLog.setText("");
+              }
+              
             if (Aprobacion == 1){
                // this.setVisible(false); ocultar frame actual
                 this.dispose();// sirve para quitar frame actual
@@ -382,6 +425,14 @@ public class Login extends javax.swing.JFrame {
               // JOptionPane.showMessageDialog(this, "Ingresa Solo Numeros");
         }
     }//GEN-LAST:event_txtMatriculaIDKeyTyped
+
+    private void txtMatriculaIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMatriculaIDActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtMatriculaIDActionPerformed
+
+    private void ComboBox_TipoULogInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComboBox_TipoULogInActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ComboBox_TipoULogInActionPerformed
 
     /**
      * @param args the command line arguments
@@ -422,6 +473,7 @@ public class Login extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox ComboBox_TipoULogIn;
     private javax.swing.JPanel Panel2;
     private javax.swing.JPanel Panel3;
     private javax.swing.JPanel Panel4;
@@ -431,6 +483,9 @@ public class Login extends javax.swing.JFrame {
     private org.edisoncor.gui.button.ButtonRound btnlogin;
     private org.edisoncor.gui.button.ButtonRound btnlogin1;
     private org.edisoncor.gui.button.ButtonRound btnlogin2;
+    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JComboBox jComboBox2;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
