@@ -10,6 +10,7 @@ package Interfaz_Grafica;
  * @author albe211
  */
 
+import static BaseDeDatos.BDSentenciasADM.AprobacionAdmin;
 import static BaseDeDatos.BDSentenciasEST.Aprobacion;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -391,7 +392,7 @@ public class Login extends javax.swing.JFrame {
             txtpasswordLog.setText("");
               }
               
-            if (Aprobacion == 1){
+            if (Aprobacion == 1|| AprobacionAdmin== 1){
                // this.setVisible(false); ocultar frame actual
                 this.dispose();// sirve para quitar frame actual
             }

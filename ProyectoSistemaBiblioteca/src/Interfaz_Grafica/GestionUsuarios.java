@@ -355,6 +355,14 @@ public class GestionUsuarios extends javax.swing.JFrame {
     }
     
     private void Guardar(){// boton Guardar
+        
+        String ComboTipo = (String)ComboBox_TipoU.getSelectedItem();
+        if (ComboTipo.equals("Seleccione")){
+            JOptionPane.showMessageDialog(null, "Faltan Casillas por llenar");
+                return;
+            
+        }
+        
         if(ComboBox_TipoU.getSelectedItem().equals("Estudiante")){
         objetos.Estudiante estAct = null;// este se usara cuando se actualizen los datos
         
@@ -376,19 +384,22 @@ public class GestionUsuarios extends javax.swing.JFrame {
          
 //metodo para comprobar si la matricula que se agregara esta ya almacenada en la tabla
          
-          int totalRow = Tabla_Estudiantes.getRowCount();//total de filas en la tabla
-           
-        //totalRow -= 1;
-       //  JOptionPane.showMessageDialog(this,totalRow );
-       /* int[]Matriculas=new int[totalRow];// array donde se ira almacenando todas las matriculas que estan en la tabla
+          int totalRows = Tabla_Estudiantes.getRowCount();//total de filas en la tabla
+       
+           if (totalRows!=0){
+        int totalRow = Tabla_Estudiantes.getRowCount();
+      //  totalRow -= 1;
+      //  JOptionPane.showMessageDialog(this,totalRow );
+        int[]Matriculas=new int[totalRow];// array donde se ira almacenando todas las matriculas que estan en la tabla
           int MatriculaTabla;
         for (int i = 0; i < (totalRow); i++) {// aqui se ira almacenando las matriculas de la tabla en el array
             MatriculaTabla= Integer.parseInt(String.valueOf(Tabla_Estudiantes.getValueAt(i, 0)));
             Matriculas[i]=MatriculaTabla;
-        }*/
-         /*int Matricula = Integer.parseInt(txt_Matricula.getText());
+        }
+         int Matricula = Integer.parseInt(txt_Matricula.getText());
          String nombreBoton = btnGuardar.getText();
         
+       
         for(int i=0;i<Matriculas.length;i++){
     if(Matricula==Matriculas[i] && nombreBoton.equals("Guardar") ){ //aqui se compara la matricula introducida con las de la tabla para ver si hay alguna igual
        
@@ -396,8 +407,8 @@ public class GestionUsuarios extends javax.swing.JFrame {
                 return ;
                 
         
-    }}*/
-         
+    }}
+           }
         
         DateFormat fecha = new SimpleDateFormat("yyyy/MM/dd");// para convertir al formato de la fecha que acepta sqlite
         String FechaNac = fecha.format(dc_fechanac.getDate());
@@ -473,16 +484,18 @@ public class GestionUsuarios extends javax.swing.JFrame {
 //metodo para comprobar si la matricula que se agregara esta ya almacenada en la tabla
          
           int totalRow = Tabla_Administradores.getRowCount();//total de filas en la tabla
+          
+          if (totalRow!=0){
            
-        //totalRow -= 1;
-       //  JOptionPane.showMessageDialog(this,totalRow );
-       /* int[]Matriculas=new int[totalRow];// array donde se ira almacenando todas las matriculas que estan en la tabla
+       // totalRow -= 1;
+        JOptionPane.showMessageDialog(this,totalRow );
+        int[]Matriculas=new int[totalRow];// array donde se ira almacenando todas las matriculas que estan en la tabla
           int MatriculaTabla;
         for (int i = 0; i < (totalRow); i++) {// aqui se ira almacenando las matriculas de la tabla en el array
             MatriculaTabla= Integer.parseInt(String.valueOf(Tabla_Estudiantes.getValueAt(i, 0)));
             Matriculas[i]=MatriculaTabla;
-        }*/
-         /*int Matricula = Integer.parseInt(txt_Matricula.getText());
+        }
+         int Matricula = Integer.parseInt(txt_Matricula.getText());
          String nombreBoton = btnGuardar.getText();
         
         for(int i=0;i<Matriculas.length;i++){
@@ -492,8 +505,8 @@ public class GestionUsuarios extends javax.swing.JFrame {
                 return ;
                 
         
-    }}*/
-         
+    }}
+          }
         
         DateFormat fecha = new SimpleDateFormat("yyyy/MM/dd");// para convertir al formato de la fecha que acepta sqlite
         String FechaNac = fecha.format(dc_fechanac.getDate());

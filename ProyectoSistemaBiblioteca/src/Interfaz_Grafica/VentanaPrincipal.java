@@ -5,10 +5,15 @@
  */
 package Interfaz_Grafica;
 
+import static BaseDeDatos.BDSentenciasADM.ApellidoAdmin;
+import static BaseDeDatos.BDSentenciasADM.Codigo;
+import static BaseDeDatos.BDSentenciasADM.NombreAdmin;
+import static BaseDeDatos.BDSentenciasADM.TipoUsuarioAdmin;
 import static BaseDeDatos.BDSentenciasEST.Apellido;
 import static BaseDeDatos.BDSentenciasEST.Matricula;
 import static BaseDeDatos.BDSentenciasEST.Nombre;
 import static BaseDeDatos.BDSentenciasEST.TipoUsuario;
+import static BaseDeDatos.BDSentenciasADM.AprobacionAdmin;
 import javax.swing.JOptionPane;
 import static BaseDeDatos.BDSentenciasEST.Aprobacion;
 
@@ -32,13 +37,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     
     private void ColocarInofrmacion(){// en este metodo sirve para colocar la informacion del usuario ya logeado en los textos que tiene la Ventana Principal
  
-        txtMatriculaVP.setText(Matricula);
-        txtUsuarioVP.setText(Nombre + " "+ Apellido);
-        txtTipoUsuarioVP.setText(TipoUsuario);
-        
-        txtMatriculaVP.setEditable(false);
-        txtUsuarioVP.setEditable(false);
-        txtTipoUsuarioVP.setEditable(false);
+      
         
         if (TipoUsuario.equals("Estudiante")){
             
@@ -46,12 +45,28 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             jMenuPrestamosBiblioteca.setEnabled(false);
             jMenuGestionarUsuarios.setEnabled(false);
             jMenuItemCarreras.setEnabled(false);
+            
+            txtMatriculaVP.setText(Matricula);
+            txtUsuarioVP.setText(Nombre + " " + Apellido);
+            txtTipoUsuarioVP.setText(TipoUsuario);
+
+            txtMatriculaVP.setEditable(false);
+            txtUsuarioVP.setEditable(false);
+            txtTipoUsuarioVP.setEditable(false);
         }
         
-        if (TipoUsuario.equals("Administrador")){
+        if (TipoUsuarioAdmin.equals("Administrador")){
             jMenuRegistroPrestamo.setEnabled(false);
             jMenuCambiarContraseña.setEnabled(false);
             
+            txtMatriculaVP.setText(Codigo);
+            txtUsuarioVP.setText(NombreAdmin + " " + ApellidoAdmin);
+            txtTipoUsuarioVP.setText(TipoUsuarioAdmin);
+
+            txtMatriculaVP.setEditable(false);
+            txtUsuarioVP.setEditable(false);
+            txtTipoUsuarioVP.setEditable(false);
+
         }
     }
             
@@ -281,12 +296,17 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
-        
+
         Aprobacion = 0;
-         Matricula =""; // variable que guardara la matricula del login para ponerlo en los otros frame
-        TipoUsuario="";
-            Nombre ="";
-           Apellido="";
+        Matricula = ""; // variable que guardara la matricula del login para ponerlo en los otros frame
+        TipoUsuario = "";
+        Nombre = "";
+        Apellido = "";
+        AprobacionAdmin = 0;
+        Codigo = ""; // variable que guardara la matricula del login para ponerlo en los otros frame
+        TipoUsuarioAdmin = "";
+        NombreAdmin = "";
+        ApellidoAdmin = "";
            Login a = new Login();
            a.setVisible(true);
            a.pack();
