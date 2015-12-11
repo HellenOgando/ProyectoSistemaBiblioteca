@@ -24,7 +24,7 @@ Connection conect = null;
       c = DriverManager.getConnection("jdbc:sqlite:SistemaBibliotecaBD.db");
       
       stmt = c.createStatement();
-      String sql = "CREATE TABLE Estudiantes " +
+    String sql = "CREATE TABLE Estudiantes " +
                    "(Matricula INT PRIMARY KEY     NOT NULL," +
                    " Nombre           TEXT    NOT NULL, " + 
                    " Apellido         TEXT    NOT NULL, " +
@@ -55,7 +55,6 @@ Connection conect = null;
                    " Autor            TEXT    NOT NULL, " + 
                    " LugarPublicacion TEXT    NOT NULL, " +
                    " FechaPublicacion DATE    NOT NULL, " + 
-                   
                    " Edicion          TEXT     NOT NULL, " +
                    " Editorial        TEXT     NOT NULL, " +
                    " NumeroPaginas    TEXT     NOT NULL, " +
@@ -66,15 +65,15 @@ Connection conect = null;
                    "(IDTransaccion        INT  PRIMARY KEY     NOT NULL," +
                    " IDUsuario            INT  NOT NULL, " + 
                    " IDLibro              INT  NOT NULL, " +
-                   " CodUbicacionLibro    TEXT NOT NULL, " + 
                    " FechaEntrega         DATE, " + 
                    " FechaDevolucion      DATE, " +
-                   " Estado               DATE    NOT NULL, " +
-                   " UltimaActualizacion  DATE   NOT NULL, " +
-                   " FOREIGN KEY(IDUsuario) REFERENCES Usuarios(IDUsuario),"+ 
-                   " FOREIGN KEY(IDLibro) REFERENCES Libros(IDLibros)"+ 
-                   " FOREIGN KEY(CodUbicacionLibro) REFERENCES Libros(CodigoUbicacion))"; 
-      
+                   " Estado               TEXT, " +
+                   " UltimaActualizacion  DATE, " +
+                   " FOREIGN KEY(IDUsuario) REFERENCES Estudiantes(Matricula),"+ 
+                   " FOREIGN KEY(IDLibro) REFERENCES Libros(IDLibros))"; 
+      stmt.executeUpdate(sql);
+     /*sql = "INSERT INTO Historial (IDTransaccion, IDUsuario, IDLibro, Estado) VALUES (3, 131066, 2, 'Entregado')";
+      stmt.executeUpdate(sql);*/
               stmt.close();
       
       
@@ -107,7 +106,8 @@ Connection conect = null;
             rsDatos = psPrepararSentencias.executeQuery();
            
         } catch(SQLException ex){throw ex;}
-    return rsDatos;
+        
+   return rsDatos;
 }
     }
 

@@ -5,55 +5,270 @@
  */
 package Interfaz_Grafica;
 
-/**
- *
- * @author albe211
- */
+import BaseDeDatos.BDConexion;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+
 public class ReservasBiblioteca extends javax.swing.JFrame {
 
-    /**
-     * Creates new form ReservasBiblioDemo
-     */
+    
+    BDConexion miconexion = new BDConexion();
+    Connection cnn = miconexion.Conexion1();
+    
+    ResultSet rsDatos ;
+    PreparedStatement psPrepararSentencias ;
+    
     public ReservasBiblioteca() {
         initComponents();
+        RefrescarTablaReservas();
          inicio();
     }
 
     public void inicio (){
-        TextField_UsuarioReserva.setEnabled(false);
+       IDTransaccionTextField.setEditable(false);
+       UsuarioTextField.setEditable(false); 
+       LibroTextField.setEditable(false);
         
     }
+    private void RefrescarTablaReservas() {// metodo para que aparesca en la tabla los elementos de la base de datos
+        
+        try {
+
+            
+            String cons = "SELECT * FROM Historial";
+            try {
+            
+            psPrepararSentencias = cnn.prepareStatement(cons);
+            rsDatos = psPrepararSentencias.executeQuery();
+           
+        } catch(SQLException ex){throw ex;}
+            ResultSet consultas = rsDatos;
+            
+    int IDUsuario = consultas.getInt("IDUsuario");
+            int IDLibro = consultas.getInt("IDLibro");
+            
+            String cons2 = "SELECT Nombre, Apellido FROM Estudiantes WHERE Matricula= "+IDUsuario;
+            ResultSet consultas2 = miconexion.consulta(cons2);
+            
+            String cons3 = "SELECT Titulo, CodigoUbicacion FROM Libros WHERE IDLibro= "+IDLibro;
+            ResultSet consultas3 = miconexion.consulta(cons3);
+            
+          
+            
+
+            String titulos[] = {"IDTransaccion", "Usuario", "Libro", "CULibro", "FechaEntrega", "FechaDevolución", "EstadoPréstamo","UltimaActuaización"};
+            DefaultTableModel modelo = new DefaultTableModel(null, titulos);
+            this.prestamoTabla.setModel(modelo);
+            
+
+            while (consultas.next()) {
+             IDUsuario = consultas.getInt("IDUsuario");
+            IDLibro = consultas.getInt("IDLibro");
+            
+             cons2 = "SELECT Nombre, Apellido FROM Estudiantes WHERE Matricula= "+IDUsuario;
+            consultas2 = miconexion.consulta(cons2);
+            
+            cons3 = "SELECT Titulo, CodigoUbicacion FROM Libros WHERE IDLibro= "+IDLibro;
+            consultas3 = miconexion.consulta(cons3);
+            
+            
+                String[] fila = new String[8];
+                
+                
+                    fila[0] = String.valueOf(consultas.getInt("IDTransaccion"));
+                    fila[1] = consultas2.getString("Nombre")+" "+consultas2.getString("Apellido");
+                    fila[2] = consultas3.getString("Titulo");
+                    fila[3] = consultas3.getString("CodigoUbicacion");
+                    fila[4] = consultas.getString("FechaEntrega");
+                    fila[5] = consultas.getString("FechaDevolucion");
+                    fila[6] = consultas.getString("Estado");
+                    fila[7] = consultas.getString("UltimaActualizacion");
+                   
+                modelo.addRow(fila);
+            }
+
+        } catch (Exception e) {
+             System.out.println(e.getMessage());
+            
+        }finally{
+           try{
+           
+           rsDatos.close();
+           }catch(Exception e){
+           
+           }
+           }
+    }
+        
+        
+    private void TocarPrestamoTabla(){
+        
+         if (this.prestamoTabla.isEnabled()){
+           IDTransaccionTextField.setEnabled(false);
+            LibroTextField.setEnabled(false);
+            UsuarioTextField.setEnabled(false);
+         try {
+            int row = prestamoTabla.getSelectedRow();
+             
+            IDTransaccionTextField.setText(prestamoTabla.getModel().getValueAt(row, 0).toString());
+            LibroTextField.setText(prestamoTabla.getModel().getValueAt(row, 2).toString());
+            UsuarioTextField.setText(prestamoTabla.getModel().getValueAt(row, 1).toString());
+            
+            String estado = prestamoTabla.getModel().getValueAt(row, 6).toString();
+            
+            if (estado.equals("Reservado")){
+            entregadoBtn.setEnabled(true);
+            devolverBtn.setEnabled(false);
+            }
+            if (estado.equals("Entregado")){
+            devolucionFecha.setEnabled(false);
+            entregadoBtn.setEnabled(false);
+            devolverBtn.setEnabled(true);
+            }
+        
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    }
+    
+    private void Entregar() throws SQLException, ClassNotFoundException{
+        
+        
+        Statement stmt = null;
+        
+        
+        DateFormat fecha = new SimpleDateFormat("yyyy/MM/dd");
+        java.util.Date FechaDev = devolucionFecha.getDate();
+       
+        
+        if(IDTransaccionTextField.getText().isEmpty()){
+            
+        JOptionPane.showMessageDialog(null, "Debe de sleccionar una transaccion del historial.");
+        
+        }else if(FechaDev == null){
+            JOptionPane.showMessageDialog(null, "Debe indicar la fecha de devolucion.");
+            
+        }else{
+           
+            String IDtrans = IDTransaccionTextField.getText();
+            
+            Date fechaActual = new Date(System.currentTimeMillis());
+            String FechaDevolucion = fecha.format(FechaDev);
+           try{ 
+            
+            String sql = "UPDATE Historial SET FechaEntrega="+fecha.format(fechaActual)+", Estado="+"'Entregado'"+ ", FechaDevolucion="+FechaDevolucion+", UltimaActualizacion="+fecha.format(fechaActual)+" WHERE IDTransaccion= "+IDtrans;
+           
+            stmt = cnn.createStatement();
+            stmt.executeUpdate(sql);
+           // stmt.close();
+           }catch(Exception e){
+           JOptionPane.showMessageDialog(null, e);
+           }finally{
+           try{
+              
+           stmt.close();
+           }catch(Exception e){
+           
+           }
+           }
+        }
+    
+            RefrescarTablaReservas();
+            
+    }
+    
+private void Devolver() throws SQLException, ClassNotFoundException{
+        
+        
+        Statement stmt = null;
+        
+        
+        DateFormat fecha = new SimpleDateFormat("yyyy/MM/dd");
+        java.util.Date FechaDev = devolucionFecha.getDate();
+       
+        String estado = "Devuelto";
+        if(IDTransaccionTextField.getText().isEmpty()){
+            
+        JOptionPane.showMessageDialog(null, "Debe de sleccionar una transaccion del historial.");
+        
+        }else{
+           
+            String IDtrans = IDTransaccionTextField.getText();
+            
+            Date fechaActual = new Date(System.currentTimeMillis());
+            String FechaDevolucion = fecha.format(FechaDev);
+           try{ 
+            
+            String sql = "UPDATE Historial SET Estado="+estado+", UltimaActualizacion="+fecha.format(fechaActual)+" WHERE IDTransaccion= "+IDtrans;
+           
+            stmt = cnn.createStatement();
+            stmt.executeUpdate(sql);
+           // stmt.close();
+           }catch(Exception e){
+           JOptionPane.showMessageDialog(null, e);
+           }finally{
+           try{
+              
+           stmt.close();
+           }catch(Exception e){
+           
+           }
+           }
+        }
+    
+            RefrescarTablaReservas();
+            
+    }
+        
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
+    
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         dateChooserDialog1 = new datechooser.beans.DateChooserDialog();
         dateChooserDialog2 = new datechooser.beans.DateChooserDialog();
+        dc_fechanac = new com.toedter.calendar.JDateChooser();
+        dc_fechanac1 = new com.toedter.calendar.JDateChooser();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        prestamoTabla = new javax.swing.JTable();
         TextField_UsuarioReserva = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        jComboBox4 = new javax.swing.JComboBox();
-        jComboBox5 = new javax.swing.JComboBox();
-        dc_fecha1 = new com.toedter.calendar.JDateChooser();
-        dc_fecha2 = new com.toedter.calendar.JDateChooser();
-        btnnuevo3 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        buscarBtn = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        IDTransaccionTextField = new javax.swing.JTextField();
+        LibroTextField = new javax.swing.JTextField();
+        UsuarioTextField = new javax.swing.JTextField();
+        devolucionFecha = new com.toedter.calendar.JDateChooser();
+        entregadoBtn = new javax.swing.JButton();
+        devolverBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -65,24 +280,43 @@ public class ReservasBiblioteca extends javax.swing.JFrame {
 
         jLabel2.setText("Usuario:");
 
-        jLabel3.setText("Libro:");
+        jLabel5.setText("Fecha para devolucion:");
 
-        jLabel4.setText("Fecha del Prestamo:");
-
-        jLabel5.setText("Fecha Devolucion:");
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        prestamoTabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Usuario", "Libro", "Estado del Préstamo", "Fecha del Prestamo", "Fecha Devolucion"
+                "IDTransaccion", "Usuario", "Libro", "CULibro", "FechaEntrega", "FechaDevolucion", "EstadoPréstamo", "UltimaActualizacionEstado"
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        prestamoTabla.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                prestamoTablaMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(prestamoTabla);
+        if (prestamoTabla.getColumnModel().getColumnCount() > 0) {
+            prestamoTabla.getColumnModel().getColumn(0).setResizable(false);
+            prestamoTabla.getColumnModel().getColumn(1).setResizable(false);
+            prestamoTabla.getColumnModel().getColumn(2).setResizable(false);
+            prestamoTabla.getColumnModel().getColumn(3).setResizable(false);
+            prestamoTabla.getColumnModel().getColumn(4).setResizable(false);
+            prestamoTabla.getColumnModel().getColumn(5).setResizable(false);
+            prestamoTabla.getColumnModel().getColumn(6).setResizable(false);
+            prestamoTabla.getColumnModel().getColumn(7).setResizable(false);
+        }
 
         TextField_UsuarioReserva.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -90,125 +324,152 @@ public class ReservasBiblioteca extends javax.swing.JFrame {
             }
         });
 
-        jLabel6.setText("Estado del Prestamo:");
+        buscarBtn.setText("Buscar");
+        buscarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buscarBtnActionPerformed(evt);
+            }
+        });
 
-        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Seleccione", "Retiro Pendiente", "Entrega Pendiente", "Rentado" }));
+        jLabel1.setText("Libro");
 
-        jComboBox5.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Seleccione", " " }));
+        jLabel3.setText("Usuario");
+
+        jLabel4.setText("IDTransaccion");
+
+        IDTransaccionTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                IDTransaccionTextFieldActionPerformed(evt);
+            }
+        });
+
+        LibroTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                LibroTextFieldActionPerformed(evt);
+            }
+        });
+
+        UsuarioTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UsuarioTextFieldActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(454, 454, 454)
+                .addComponent(jLabel2)
+                .addGap(18, 18, 18)
+                .addComponent(TextField_UsuarioReserva, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(38, 38, 38)
+                .addComponent(buscarBtn)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(42, 42, 42)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel5))
-                            .addGap(36, 36, 36))
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addGap(46, 46, 46)))
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TextField_UsuarioReserva, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
-                    .addComponent(jComboBox4, 0, 141, Short.MAX_VALUE)
-                    .addComponent(jComboBox5, 0, 141, Short.MAX_VALUE)
-                    .addComponent(dc_fecha1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(dc_fecha2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(29, 29, 29)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                        .addComponent(devolucionFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(UsuarioTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(LibroTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(IDTransaccionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(33, 33, 33)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 569, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(64, 64, 64))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
+                .addGap(22, 22, 22)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(TextField_UsuarioReserva, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(14, 14, 14)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(TextField_UsuarioReserva, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(buscarBtn)
+                            .addComponent(jLabel2))
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(26, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dc_fecha1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel5)
-                            .addComponent(dc_fecha2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(devolucionFecha, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGap(32, 32, 32)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(IDTransaccionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(LibroTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel6)
-                            .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addComponent(UsuarioTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))
+                        .addGap(49, 49, 49))))
         );
 
-        btnnuevo3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/img_eliminar.png"))); // NOI18N
-        btnnuevo3.setText("Eliminar");
-        btnnuevo3.addActionListener(new java.awt.event.ActionListener() {
+        entregadoBtn.setText("Entregar");
+        entregadoBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnnuevo3ActionPerformed(evt);
+                entregadoBtnActionPerformed(evt);
             }
         });
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/img_editar.png"))); // NOI18N
-        jButton3.setText("Modificar");
-
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/img_guardar.png"))); // NOI18N
-        jButton1.setText("Guardar");
-
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/img_nuevo.png"))); // NOI18N
-        jButton2.setText("Nuevo");
+        devolverBtn.setText("Devolver");
+        devolverBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                devolverBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel10)
+                .addGap(379, 379, 379))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(160, 160, 160)
-                        .addComponent(jButton2)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton1)
-                        .addGap(32, 32, 32)
-                        .addComponent(jButton3)
-                        .addGap(28, 28, 28)
-                        .addComponent(btnnuevo3))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(299, 299, 299)
-                        .addComponent(jLabel10)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(231, 231, 231)
+                        .addComponent(entregadoBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(79, 79, 79)
+                        .addComponent(devolverBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnnuevo3)
-                    .addComponent(jButton1)
-                    .addComponent(jButton3)
-                    .addComponent(jButton2))
-                .addContainerGap(38, Short.MAX_VALUE))
+                    .addComponent(entregadoBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(devolverBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -230,9 +491,7 @@ public class ReservasBiblioteca extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 949, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -243,14 +502,46 @@ public class ReservasBiblioteca extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
+    private void entregadoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entregadoBtnActionPerformed
+        try {
+            // TODO add your handling code here:
+            Entregar();
+        } catch (SQLException ex) {
+            Logger.getLogger(ReservasBiblioteca.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ReservasBiblioteca.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_entregadoBtnActionPerformed
 
-    private void btnnuevo3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnnuevo3ActionPerformed
+    private void devolverBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_devolverBtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnnuevo3ActionPerformed
+    }//GEN-LAST:event_devolverBtnActionPerformed
 
     private void TextField_UsuarioReservaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TextField_UsuarioReservaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_TextField_UsuarioReservaActionPerformed
+
+    private void buscarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buscarBtnActionPerformed
+
+    private void IDTransaccionTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IDTransaccionTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_IDTransaccionTextFieldActionPerformed
+
+    private void LibroTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LibroTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_LibroTextFieldActionPerformed
+
+    private void UsuarioTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UsuarioTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_UsuarioTextFieldActionPerformed
+
+    private void prestamoTablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_prestamoTablaMouseClicked
+        // TODO add your handling code here:
+        TocarPrestamoTabla();
+    }//GEN-LAST:event_prestamoTablaMouseClicked
 
     /**
      * @param args the command line arguments
@@ -295,27 +586,28 @@ public class ReservasBiblioteca extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField IDTransaccionTextField;
+    private javax.swing.JTextField LibroTextField;
     private javax.swing.JTextField TextField_UsuarioReserva;
-    private javax.swing.JButton btnnuevo3;
+    private javax.swing.JTextField UsuarioTextField;
+    private javax.swing.JButton buscarBtn;
     private datechooser.beans.DateChooserDialog dateChooserDialog1;
     private datechooser.beans.DateChooserDialog dateChooserDialog2;
-    private com.toedter.calendar.JDateChooser dc_fecha1;
-    private com.toedter.calendar.JDateChooser dc_fecha2;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JComboBox jComboBox4;
-    private javax.swing.JComboBox jComboBox5;
+    private com.toedter.calendar.JDateChooser dc_fechanac;
+    private com.toedter.calendar.JDateChooser dc_fechanac1;
+    private com.toedter.calendar.JDateChooser devolucionFecha;
+    private javax.swing.JButton devolverBtn;
+    private javax.swing.JButton entregadoBtn;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable prestamoTabla;
     // End of variables declaration//GEN-END:variables
 }
