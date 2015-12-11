@@ -29,10 +29,10 @@ public class BDSentenciasADM {
     
     Connection cnn = DriverManager.getConnection("jdbc:sqlite:SistemaBibliotecaBD.db");
     public static String Codigo =""; // variable que guardara la matricula del login para ponerlo en los otros frame
-    public static String TipoUsuario="";
-    public static String Nombre ="";
-    public static String Apellido="";
-    public static int Aprobacion = 0;// variable que se usa para saber si se logue el usuario y cerrar la ventana del login
+    public static String TipoUsuarioAdmin="";
+    public static String NombreAdmin ="";
+    public static String ApellidoAdmin="";
+    public static int AprobacionAdmin = 0;// variable que se usa para saber si se logue el usuario y cerrar la ventana del login
     
 
 
@@ -98,7 +98,7 @@ if (datos instanceof Administrador) {
   
   
   public void acceder(String codigo, String contrasena) {// metodo para el login 
-        String TipoU = "";
+        String TipoU = "Administrador";
         String Cod = "";
         String Pass = "";
         String nombre = "" , apellido= ""; 
@@ -115,24 +115,24 @@ if (datos instanceof Administrador) {
                 apellido = rs.getString("Apellido");
 
             }
-            if (!Cod.equals(codigo) && !Cod.equals(contrasena)){
-                JOptionPane.showMessageDialog(null, " Matricula o Contraseña Incorrecta");
+            if (!Cod.equals(codigo) && !Pass.equals(contrasena)){
+                JOptionPane.showMessageDialog(null, " Codigo o Contraseña Incorrecta");
                 return;
                 
             }
-          
+           if (TipoU.equals("Administrador")) {
                 
-                 Cod = codigo;
-                TipoUsuario = TipoU;
-                Nombre = nombre;
-                Apellido = apellido;
-                Aprobacion = 1;
+                Codigo = codigo;
+                TipoUsuarioAdmin = TipoU;
+                NombreAdmin = nombre;
+                ApellidoAdmin = apellido;
+               AprobacionAdmin = 1;
                 
                 
                 VentanaPrincipal q = new VentanaPrincipal();
                 q.setVisible(true);
                 q.pack();
-               
+           }
 
             
            
